@@ -1,0 +1,181 @@
+﻿@*@using FoxAminLte.Extensions*@
+@using DsCommon.ModelsTable;
+@using Microsoft.CodeAnalysis.CSharp.Scripting
+@model DsCommon.ModelsTable.TableUIExt
+
+@{
+    Layout = "~/Views/Shared/AdminLTE/_Layout.cshtml";
+}
+
+<partial name="AdminLTE/_Notifications">
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">@ViewData["TableTitle"]</h3>
+            <div class="card-tools">
+                @if (Model.IsCreateAllow)
+                {
+                    if (Model.IsOnModalCreate == false)
+                    {
+                        <a class="btn btn-primary" asp-action="Create" asp-controller="@Model.CreateUrl">
+                            <i class="fa fa-plus"></i>
+                            Nuevo
+                        </a>
+                    }
+                    else
+                    {
+                        <button class="btn btn-primary" type="button" data-toggle="ajax-modal" data-url="@Url.Action("Create", @Model.CreateUrl)">
+                            <i class="fa fa-plus"></i>
+                            Nuevo
+                        </button>
+                    }
+                }
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered table-hover" cellspacing="0" id="tablaData" width="100%">
+                    <thead>
+                        <tr>
+                            @foreach (var f in Model.Fields)
+                                if (f.Visible)
+                                {
+                                    <th>@f.Label</th>
+                                }
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    @section Header {
+        <link href="~/css/cssDataTables.css" rel="stylesheet" />
+    }
+    <!-- /.content -->
+    @section Scripts {
+
+        <script type="text/javascript">
+
+            //  var tableDatos;
+
+            var divLoading = document.querySelector("#divLoading");
+
+            tableDatos = $('#tablaData')
+                .DataTable({                 
+                    "processing": true,                     
+                    "serverSide": @Model.IsServerSide,
+                    "filter" : true,
+                    "ajax": {
+                        "url": "@Model.ApiUrl",
+                        "type": "@Model.Metodo"
+                    },
+                    "language": {
+                        "url": "https://cdn.datatables.net/plug-ins/1.10.19/i18n/Spanish.json"
+                    },
+                    "columnDefs": [
+            @foreach (FieldUI item in Model.Fields)
+            {
+                @if (item.Tipo == "N")
+                {
+                    @:{ className: '@item.Clase', "targets": @item.ColumnaNumber , "render": $.fn.dataTable.render.number(',', '.', 2, '') },
+                }
+                @if (item.Tipo == "C")
+                {
+                    @:{ className: '@item.Clase', "targets": @item.ColumnaNumber , "render": $.fn.dataTable.render.number(',', '.', 2, '') },
+                }
+                @if (item.Tipo == "S")
+                {
+                    @:{ className: '@item.Clase', "targets": @item.ColumnaNumber },
+                }
+                @if (item.Tipo == "D")
+                {
+                    @:{ className: '@item.Clase', "targets": @item.ColumnaNumber, "render": function (data) { const fecha = new Date(data); return new Intl.DateTimeFormat('fr-FR').format(fecha); } },
+                }
+
+            }
+
+                                                                   ],
+                    "columns": [
+            @foreach (FieldUI item in Model.Fields)
+            {
+                @:{ "data": "@item.Data", "name": "@item.Data", "width": "@item.ColumWidth" },
+            }
+                        {
+                            "data": "id",
+                            "render": function (data) {
+                                return `
+                                                                               <div class="text-center">
+            @foreach (var f in Model.Methods)
+            {
+                if (f.IsOnModal == true)
+                {
+                                                                                                                                 <button onclick=fntAbrir("@f.Url/${data}") class="@f.Clase" title ="@f.titulo">
+                                                                                                                                                   <i class="@f.Icono"></i>
+                                                                                                                           </button>
+                }
+                else
+                {
+                                                                                                                                 <a href="@f.Url/${data}" class="@f.Clase" title ="@f.titulo">
+                                                                                                                                <i class="@f.Icono"></i>
+                                                                                                                            </a>
+                }
+            }
+
+                                                                               </div>
+                                                                               `;
+                            }, "width": "@Model.WidthAcciones"
+                        }
+                    ],
+                    'dom': '@Model.Dom',
+                    buttons: [
+                        {
+                            'extend': 'excelHtml5',
+                            'text': "<i class='fas fa-file-excel'></i> Excel",
+                            'titleAttr': "Exportar a Excel",
+                            'className': "btn btn-success"
+                        },
+                        {
+                            'extend': 'pdfHtml5',
+                            'text': "<i class='fas fa-file-pdf'></i> PDF",
+                            'titleAttr': "Exportar a PDF",
+                            'className': "btn btn-danger"
+                        },
+                        {
+                            'extend': 'print',
+                            'text': "<i class='fa fa-print'></i> Print",
+                            'titleAttr': "Imprimir",
+                            'className': "btn btn-info"
+                        },
+                    ],
+                    "resonsieve": true,
+                    "bDestroy": true,
+                    "iDisplayLength": @Model.DisplayLength,
+                    "order": [
+            @foreach (OrderUI item in Model.ViewOrder)
+            {
+                @:[@item.Order, '@item.Direccion'],
+            }
+                                                                   ],
+                });
+
+            $(document).ready(function () {
+                var msg = "@TempData["SuccessMessage"]";
+                if (msg) {
+                    openSuccessModal(msg);
+                };
+            });
+
+            function openSuccessModal(strMessage) {
+                var myDiv = document.getElementById("myModalSuccessAlertBody");
+                myDiv.innerHTML = strMessage;
+                var myModal = new bootstrap.Modal(document.getElementById('myModalSuccess'), { keyboard: true });
+                myModal.show();
+            }
+
+        </script>
+
+    }
+

@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../images/favicon.ico">
+
+    <title>Fox Admin - Log in </title>
+
+    <!-- Vendors Style-->
+    <link rel="stylesheet" href="~/foxadmin/css/vendors_css.css">
+
+    <!-- Style-->
+    <link rel="stylesheet" href="~/foxadmin/css/style.css">
+    <link rel="stylesheet" href="~/foxadmin/css/skin_color.css">
+
+    <link rel="stylesheet" type="text/css" href="~/css/site.css">
+
+</head>
+
+<body class="hold-transition theme-primary bg-img" style="background-image: url(../images/auth-bg/bg-1.jpg)">
+    <div id="divLoading">
+        <div>
+            <img src="~/images/loading.svg" alt="Loading" />
+        </div>
+    </div>
+
+    <div class="container h-p100">
+       @RenderBody()
+    </div>
+
+
+
+    <!-- Vendor JS -->
+    <script src="~/foxadmin/js/vendors.min.js"></script>
+    <script src="~/foxadmin/js/pages/chat-popup.js"></script>
+    <script src="../assets/icons/feather-icons/feather.min.js"></script>
+
+    <script src="../assets/vendor_components/sweetalert/sweetalert.min.js"></script>
+    <script src="../assets/vendor_components/sweetalert/jquery.sweet-alert.custom.js"></script>
+
+    <!-- Fox Admin App -->
+    @*<script src="~/foxadmin/js/template.js"></script>*@
+
+    @{
+        if (TempData["page_function_js"] != null)
+        {
+            <script src=@TempData["page_function_js"]></script>
+
+        }
+    }
+
+
+</body>
+</html>

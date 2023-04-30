@@ -1,0 +1,26 @@
+﻿@model Caritas.Insfrastructure.Model.Cliente
+
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="titleModal">@ViewBag.Title</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form asp-action="Delete">
+                <div class="form-group">
+                    <div class="text-center">
+                        ¿Está seguro de querer eliminar el cliente:
+                        @Html.DisplayFor(m => m.FullName)?
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button data-save="modal" class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i><span id="btnText">Eliminar</span></button>&nbsp;&nbsp;&nbsp;
+                    <button class="btn btn-secondary" data-bs-dismiss="modal"><i class="fa fa-fw fa-lg fa-times-circle"></i>Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

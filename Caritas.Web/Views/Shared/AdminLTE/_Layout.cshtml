@@ -1,0 +1,121 @@
+﻿@using Caritas.Web.Extensions
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="~/images/favicon.ico">
+
+    <title>@ViewBag.titulo</title>
+
+    <partial name="AdminLTE/_Styles" />
+
+    <link rel="stylesheet" type="text/css" href="~/css/main.css">
+    @RenderSection("Header", required: false)
+</head>
+
+<body class="hold-transition light-skin sidebar-mini theme-primary fixed">
+
+    <div id="divLoading">
+        <div>
+            <img src="~/images/loading.svg" alt="Loading" />
+        </div>
+    </div>
+
+    <div class="wrapper">
+        <div id="loader"></div>
+
+        <header class="main-header">
+            <div class="d-flex align-items-center logo-box justify-content-center">
+                <!-- Logo -->
+                <a href="index.html" class="logo">
+                    <!-- logo-->
+                    <div class="logo-mini w-40 p-0">
+                        <span class="light-logo"><img src="~/img/programa/logo-letter.png" alt="logo"></span>
+@*                        <span class="dark-logo"><img src="~/img/programa/logo-leter.jpg" alt="logo"></span>
+*@                    </div>
+                    <div class="logo-mini w-60 m-5">
+                        <span class="light-logo"><img src="~/img/programa/logo-light-text.png" alt="logo"></span>
+                     @*  <span class="dark-logo"><img src="~/images/logo-light-text.png" alt="logo"></span>*@
+                    </div>
+                </a>
+            </div>
+
+            <partial name="AdminLTE/_TopNavigation" />
+
+        </header>
+        <partial name="AdminLTE/_MainNavigation" />
+
+        <div class="content-wrapper">
+
+            <div class="content-header">
+
+                <div class="d-flex align-items-center">
+                    <div class="me-auto">
+                        @* <h4 class="page-title">@ViewData["Title"]</h4>*@
+                        <div class="d-inline-block align-items-center">
+                            <nav>
+                                <div class="col-sm-12">
+                                    @Html.BuildBreadcrumbNavigation((List<BreadcrumbItem>)ViewBag.BreadcrumbExtras)
+                                </div>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+                <!-------Success dialog start------>
+                <div id="myModalSuccess" class="modal fade fa-text-width=30%" tabindex="-1"  role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h2 class="modal-title" id="myModalLabel">Información</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div id="myModalSuccessAlertBody" class="modal-body alert">
+                                Aca va un texto
+                            </div>
+                            <div class="modal-footer">
+                                &nbsp;
+                                <button type="button" class="btn btn-info float-end" data-bs-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-------Success dialog end-------->
+                
+                <div class="container-full">
+                    @RenderBody()
+                </div>
+            </div>
+
+
+            <!-- Content Wrapper. Contains page content -->
+
+
+        </div>
+
+        <partial name="AdminLTE/_Footer" />
+    </div>
+    <partial name="AdminLTE/_Scripts" />
+  
+
+    <partial name="AdminLTE/_Lockscreen" />
+    <partial name="AdminLTE/_Notification" />
+
+    }
+  
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>
+
+<div id='modalGenerica' class='modal fade' tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+    <div id='contentModal'></div>
+</div>

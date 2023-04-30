@@ -1,0 +1,66 @@
+﻿@model  DsCommon.ModelsView.UserViewModel
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header header-primary">
+            <h5 class="modal-title" id="titleModal">Datos del usuario</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td>Id:</td>
+                        <td>@Model.Id</td>
+                    </tr>
+                    <tr>
+                        <td>Nombres:</td>
+                        <td id="celNombre">@Model.Nombre</td>
+                    </tr>
+                    <tr>
+                        <td>Dirección:</td>
+                        <td id="celNombre">@Model.Direccion</td>
+                    </tr>
+                    <tr>
+                        <td>Ciudad:</td>
+                        <td id="celNombre">@Model.CPostal - @Model.Ciudad</td>
+                    </tr>
+                    <tr>
+                        <td>Provincia:</td>
+                        <td id="celNombre">@Model.Provincia</td>
+                    </tr>
+                    <tr>
+                        <td>Teléfono:</td>
+                        <td id="celTelefono">@Model.PhoneNumber</td>
+                    </tr>
+                    <tr>
+                        <td>Email (Usuario):</td>
+                        <td id="celEmail">@Model.Email</td>
+                    </tr>
+                    <tr>
+                        <td>Tipo Usuario:</td>
+                        <td id="celTipoUsuario">@Model.Role</td>
+                    </tr>
+                    <tr>
+                        <td>Estado:</td>
+                        @{
+                            @if (Model.Estado.ToString() == "Activo")
+                            {
+                                <td id="celEstado"><span class='badge badge-success'>Activo</span></td>
+                            }
+                            else
+                            {
+                                <td id="celEstado"> <span class='badge badge-danger'>Inactivo</span></td>
+                            }
+                        }
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+    </div>
+</div>

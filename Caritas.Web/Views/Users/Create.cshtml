@@ -1,0 +1,75 @@
+﻿@using DsCommon.Enums
+@model Caritas.Web.DTOs.UserCreateDto
+
+@{
+    var title = "Crear Usuario";
+}
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="box">
+                <div class="box-header with-border">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="row p-3 border">
+
+                            <div class="col-12 border-bottom">
+                                <h2 class="text-primary">@title</h2>
+                            </div>
+                            <p class="text-primary">Todos los campos son obligatorios.</p>
+
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label for="txtNombre">Apellido y Nombre</label>
+                                    <input type="text" class="form-control valid validText" asp-for="Nombre">
+                                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="txtEmail">Email</label>
+                                    <input type="text" class="form-control" asp-for="Email">
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="txtTelefono">Teléfono</label>
+                                    <input type="text" class="form-control valid validNumber" asp-for="PhoneNumber" onkeypress="return controlTag(event);">
+                                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="listRolid">Rol</label>
+                                    <div class="col-12">
+                                        <select asp-for="Role" asp-items="Model.Roles" class="form-control select2"  data-placeholder="Seleccione un rol"
+                                                style="width: 100%;">
+                                        </select>
+                                        <span asp-validation-for="Role" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="exampleSelect1">Estado</label>
+                                    <select class="form-select" asp-for="Status" asp-items="Html.GetEnumSelectList<EstadoEnum>()">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="tile-footer">
+                                <button id="btnActionForm" class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i><span id="btnText">Crear</span></button>&nbsp;&nbsp;&nbsp;
+                                <a class="btn btn-danger" asp-action="Index" asp-controller="Users"><i class="fa fa-fw fa-lg fa-times-circle"></i>Regresar a la lista</a>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,30 @@
+﻿<script language="javascript">
+    <!--
+    var redirectUrl = '@Url.Action("Lockscreen", "ServicePage")';
+    var afterMinutes = 10;
+
+    var idleTime = 0;
+
+    console.log("Start detect inactivity");
+    //Increment the idle time counter every minute.
+    var idleInterval = setInterval(timerIncrement, 60000); // 1 minute
+
+    //Zero the idle timer on mouse movement.
+    $(this).mousemove(function (e) {
+        idleTime = 0;
+    });
+    $(this).keypress(function (e) {
+        idleTime = 0;
+    });
+
+    function timerIncrement() {
+        console.log("Inactivity for " + idleTime + " minutes");
+        idleTime = idleTime + 1;
+        if (idleTime > afterMinutes) {
+            console.log('Redirect to lockscreen');
+            clearInterval(idleInterval);
+            window.location.href = redirectUrl;
+        }
+    }
+    //-->
+</script>

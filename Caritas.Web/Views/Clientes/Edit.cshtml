@@ -1,0 +1,120 @@
+﻿@using DsCommon.Enums
+@model Caritas.Web.DTOs.ClienteDto
+
+@{
+    var title = "Editar Cliente";
+}
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="box">
+                <div class="box-header with-border">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="Id">
+                        <div class="row p-3 border">
+
+                            <div class="col-12 border-bottom">
+                                <h2 class="text-primary">@title</h2>
+                            </div>
+                            <p class="text-primary">Apellido y Nombre son obligatorios.</p>
+
+                            <div class="row">
+                                <div class="form-group col-md-1">
+                                    <label for="txtNombre">Código</label>
+                                    <input type="text" class="form-control valid validText" asp-for="Id" readonly>
+                                    <span asp-validation-for="Id" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-5">
+                                    <label for="txtNombre">Apellido</label>
+                                    <input type="text" class="form-control valid validText" asp-for="Apellido">
+                                    <span asp-validation-for="Apellido" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="txtNombre">Nombre</label>
+                                    <input type="text" class="form-control valid validText" asp-for="Nombre">
+                                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label for="txtEmail">Domicilio</label>
+                                    <input type="text" class="form-control" asp-for="Domicilio">
+                                    <span asp-validation-for="Domicilio" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="txtTelefono">C.Postal</label>
+                                    <input type="text" class="form-control valid validNumber" asp-for="CodigoPostal">
+                                    <span asp-validation-for="CodigoPostal" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="txtEmail">Localidad</label>
+                                    <input type="text" class="form-control" asp-for="Localidad">
+                                    <span asp-validation-for="Localidad" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="txtTelefono">Documento</label>
+                                    <input type="text" class="form-control valid validNumber" asp-for="Documento">
+                                    <span asp-validation-for="Documento" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-3">
+                                    <label for="txtEmail">Email Principal</label>
+                                    <input type="text" class="form-control" asp-for="Email">
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="txtTelefono">Email Secundario</label>
+                                    <input type="text" class="form-control valid validNumber" asp-for="Email2">
+                                    <span asp-validation-for="Email2" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="txtEmail">Teléfono</label>
+                                    <input type="text" class="form-control" asp-for="Telefono">
+                                    <span asp-validation-for="Telefono" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-3">
+                                    <label for="txtTelefono">Celular</label>
+                                    <input type="text" class="form-control valid validNumber" asp-for="Celular">
+                                    <span asp-validation-for="Celular" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-8">
+                                    <label for="txtEmail">Observaciones</label>
+                                    <input type="text" class="form-control" asp-for="Observaciones">
+                                    <span asp-validation-for="Observaciones" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="txtTelefono">P.Electrónico</label>
+                                    <input type="text" class="form-control valid validNumber" asp-for="Dest">
+                                    <span asp-validation-for="Dest" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="txtTelefono">Estado</label>
+                                    <select class="form-select" asp-for="Status" required=""
+                                    asp-items="Html.GetEnumSelectList<EstadoEnum>()">
+                                    </select>
+                                </div>                             
+                            </div>
+                            <div class="tile-footer">
+                                <button id="btnActionForm" class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i><span id="btnText">Actualizar</span></button>&nbsp;&nbsp;&nbsp;
+                                <a class="btn btn-danger" asp-action="Index" asp-controller="Clientes"><i class="fa fa-fw fa-lg fa-times-circle"></i>Regresar a la lista</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+

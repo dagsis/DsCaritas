@@ -1,0 +1,97 @@
+﻿@using static Caritas.Web.Helpers.NavigationIndicatorHelper;
+
+<aside class="main-sidebar">
+    <!-- sidebar-->
+    <section class="sidebar position-relative">
+        <div class="user-panel">
+            <div class="d-flex align-items-center">
+                <div class="image m-15">
+                    <img class="app-sidebar__user-avatar" src="~/images/avatar.png" alt="User Image">
+                </div>
+                <div class="info text-start">
+                    <h5 class="mb-0 text-white">@await Component.InvokeAsync("UserName")</h5>
+                    <a href="#" class="text-white">@await Component.InvokeAsync("RolName")</a>
+                </div>
+            </div>
+        </div>
+        <div class="multinav">
+            <div class="multinav-scroll" style="height: 100%;">
+                <!-- sidebar menu-->
+                <ul class="sidebar-menu" data-widget="tree">
+                    <li>
+                        <a href="home" class="nav-link @Url.MakeActiveClass("Home","Index")">
+                            <i data-feather="server"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    @if (User.IsInRole("Administrador") || User.IsInRole("Usuario"))
+                    {
+                        <li class="treeview">
+                            <a href="#">
+                                <i data-feather="users"></i>
+                                <span>Usuarios</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-right pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a asp-action="Index" asp-controller="Users"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Usuarios</a></li>
+                            </ul>
+                        </li>
+                        <li class="treeview">
+                            <a href="#">
+                                <i data-feather="tablet"></i>
+                                <span>Tablas</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-right pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a asp-action="Index" asp-controller="Conceptos"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Conceptos</a></li>
+                                <li><a asp-action="Index" asp-controller="FormaPagos" class="nav-link @Url.MakeActiveClass("Monedas", "Index")"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Formas de Pago</a></li>
+                                <li><a asp-action="Index" asp-controller="TipoUbicación"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Tipo Ubicaciòn</a></li>
+                                <li><a asp-action="Index" asp-controller="Ubicación"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Ubicación</a></li>
+                            </ul>
+                        </li>
+                    }
+                    <li class="treeview">
+                        <a href="#">
+                            <i data-feather="archive"></i>
+                            <span>Maestros</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-right pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a asp-action="Index" asp-controller="Adjudicados"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Adjudicados</a></li>
+                            <li><a asp-action="Index" asp-controller="Clientes"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Clientes</a></li>
+                            <li><a asp-action="Index" asp-controller="Inhumados"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Inhumados</a></li>
+                        </ul>
+                    </li>
+                    <li class="treeview">
+                        <a href="#">
+                            <i data-feather="grid"></i>
+                            <span>Administración</span>
+                            <span class="pull-right-container">
+                                <i class="fa fa-angle-right pull-right"></i>
+                            </span>
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a asp-action="Index" asp-controller="Opcion1"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Opcion 1</a></li>
+                            <li><a asp-action="Index" asp-controller="Opcion1"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Opcion 2</a></li>
+                            <li><a asp-action="Index" asp-controller="Opcion1"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Opcion 3</a></li>
+                            <li><a asp-action="Index" asp-controller="Opcion1"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Opcion 4</a></li>
+                            <li><a asp-action="Index" asp-controller="Opcion1"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Opcion 5</a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <div class="sidebar-widgets">
+                    <div class="copyright text-start m-25">
+                        <p class="text-white-50"><strong class="d-block text-white-50">Caritas</strong> Argentina</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</aside>

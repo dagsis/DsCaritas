@@ -1,0 +1,74 @@
+﻿@model Caritas.Insfrastructure.Model.Cliente
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header header-primary">
+            <h5 class="modal-title" id="titleModal">Datos del cliente</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td>Apellido y Nombre:</td>
+                        <td>@Model.Id - @Model.FullName</td>
+                    </tr>
+                    <tr>
+                        <td>Domicilio:</td>
+                        <td>@Model.Domicilio</td>
+                    </tr>
+                    <tr>
+                        <td>Ciudad:</td>
+                        <td>@Model.CodigoPostal - @Model.Localidad</td>
+                    </tr>
+                    <tr>
+                        <td>Teléfono:</td>
+                        <td>@Model.Telefono</td>
+                    </tr>
+                    <tr>
+                        <td>Celular:</td>
+                        <td>@Model.Celular</td>
+                    </tr>
+                    <tr>
+                        <td>Email:</td>
+                        <td>@Model.Email</td>
+                    </tr>
+                    <tr>
+                        <td>Email 2:</td>
+                        <td>@Model.Email2</td>
+                    </tr>
+                    <tr>
+                        <td>Documento:</td>
+                        <td>@Model.Documento</td>
+                    </tr>
+                    <tr>
+                        <td>P.Electrónico:</td>
+                        <td>@Model.Dest</td>
+                    </tr>
+                    <tr>
+                        <td>Observación:</td>
+                        <td>@Model.Observaciones</td>
+                    </tr>
+                    <tr>
+                        <td>Estado:</td>
+                        @{
+                            @if (Model.Estado.ToString() == "Activo")
+                            {
+                                <td id="celEstado"><span class='badge badge-success'>Activo</span></td>
+                            }
+                            else
+                            {
+                                <td id="celEstado"> <span class='badge badge-danger'>Inactivo</span></td>
+                            }
+                        }
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+    </div>
+</div>

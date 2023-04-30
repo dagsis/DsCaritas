@@ -1,0 +1,55 @@
+﻿@using Caritas.Web.Extensions
+@using Caritas.Web.Helpers
+
+@{
+    ViewData["Title"] = "Lockscreen";
+    Layout = "~/Views/Shared/AdminLTEPlain/_Layout.cshtml";
+
+    string userName = User.Identity?.Name;
+    string realName = UIHelpers.GetRealName(User.Claims);
+    string role = User.Claims?.GetClaimValue("role");
+    string displayName = realName ?? userName;
+}
+
+<div class="row align-items-center justify-content-md-center h-p100">
+    <div class="col-12">
+        <div class="row justify-content-center g-0">
+            <div class="col-lg-5 col-md-5 col-12">
+                <div class="bg-white rounded10 shadow-lg">
+                    <div class="content-top-agile p-20">
+                        <img src="../img/programa/logo-letter.png" alt="User Image"> @*class="rounded-circle"*@
+                        <h3 class="mb-0">@userName</h3>
+                    </div>
+                    <div class="p-40">
+                        <form asp-action="LockscreenCheck" method="post">
+                            <div class="form-group">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text bg-transparent"><i class="ti-lock"></i></span>
+                                    <input type="password" id="password" name="password" class="form-control ps-15 bg-transparent" placeholder="Password">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 text-center">
+                                    <button type="submit" class="btn btn-info mt-10">Enviar</button>
+                                </div>
+                                <!-- /.col -->
+                            </div>
+                        </form>
+
+                        <div class="text-center">
+                            <p class="mb-5">Ingrese su contraseña para iniciar sesion</p>
+                        </div>
+
+                        <div class="text-center">
+                            <p class="mt-20">- O -</p>
+                            <p class="mt-15 mb-0"><a asp-controller="Account" asp-action="Login" class="text-warning"><b>Ingresar</b></a> para un diferente usuario</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

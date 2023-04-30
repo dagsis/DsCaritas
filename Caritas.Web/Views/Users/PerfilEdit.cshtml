@@ -1,0 +1,74 @@
+﻿@model Caritas.Web.DTOs.UserEditPerfilDto
+
+@{
+//    var title = "Editar Usuario";
+}
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="box">
+                <div class="box-header with-border">
+                    <form name="formPerfil" id="formPerfil" method="post" autocomplete="off">
+                        <input type="hidden" asp-for="Id" />
+                        <p class="text-primary">La Contraseña es opcional</p>
+                        <div class="row">
+                            <div class="form-group col-md-6">
+                                <label for="txtEmail">Email</label>
+                                <input type="email" class="form-control valid validEmail" asp-for="Email" readonly="readonly">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="txtTelefono">Teléfono</label>
+                                <input type="text" class="form-control valid validNumber" asp-for="PhoneNumber" onkeypress="return controlTag(event);">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="txtNombre">Apellido y Nombre</label>
+                                <input type="text" class="form-control valid validText" asp-for="Nombre">
+                                <span asp-validation-for="Nombre" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-12">
+                                <label for="txtNombre">Dirección</label>
+                                <input type="text" class="form-control valid validText" asp-for="Direccion">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-2">
+                                <label>C.Postal</label>
+                                <input type="text" class="form-control" asp-for="CPostal">
+                            </div>
+                            <div class="form-group col-md-10">
+                                <label>Ciudad</label>
+                                <input type="text" class="form-control" asp-for="Ciudad">
+                            </div>
+                            <div class="form-group col-md-12">
+                                <label>Provincia</label>
+                                <input type="text" class="form-control" asp-for="Provincia">
+                            </div>
+                        </div>                     
+                        <div class="tile-footer">
+                            <button id="btnActionForm" class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i><span id="btnText">Actualizar</span></button>&nbsp;&nbsp;&nbsp;
+                            <a class="btn btn-success" onclick=openmodal("/Users/CambiarContraseña")>
+                                <i class="fa fa-key" aria-hidden="true"></i>
+                                Cambiar Contraseña
+                            </a>
+                        </div>                       
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+   
+    }
+}
+
