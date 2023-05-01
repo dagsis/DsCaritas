@@ -15,20 +15,25 @@ namespace DsCommon.Services
         Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>> predicate);
 
         Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>>? predicate,
-                                       Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy,
+                                       Func<IQueryable<T>, IOrderedQueryable<T>> orderBy,
                                        string? includeString,
                                        bool disableTracking = true);
 
         Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>>? predicate,
-                                       Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+                                       Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
                                        List<Func<IQueryable<T>, IIncludableQueryable<T, object>>> Includes = null,
                                        bool disableTracking = true);
 
+        Task<IReadOnlyList<T>> GetAsync(Expression<Func<T, bool>>? predicate,
+                                       Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+                                       List<Expression<Func<T, object>>>? includes = null,
+                                       bool disableTracking = true);
 
         Task<T> GetEntityAsync(Expression<Func<T, bool>>? predicate,
                                          List<Expression<Func<T, object>>>? includes = null,
                                        bool disableTracking = true);
 
+      
         Task<T> GetByIdAsync(int id);
         Task<T> AddAsync(T entity);
 

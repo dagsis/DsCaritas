@@ -137,5 +137,15 @@ namespace DsCommon.Services
                 Url = SDRutas.IdentityApiBase + "/v1/Identity/resetPassword",
             });
         }
+
+        public async Task<T> GetModuleUserAsync<T>(string token, int companiaId, string userId)
+        {
+            return await this.SendAsync<T>(new ApiRequest()
+            {
+                ApiType = SDRutas.ApiType.GET,
+                Url = SDRutas.IdentityApiBase + "/v1/User/userModule/" + userId + "/" + companiaId,
+                AccessToken = token
+            });
+        }
     }
 }

@@ -21,7 +21,6 @@ namespace Caritas.Insfrastructure.Data
         public DbSet<Inhumado> Inhumados { get; set; }
         public DbSet<TipoUbicacion> TipoUbicacions { get; set; }
         public DbSet<Ubicacion> Ubicacions { get; set; }
-
-
+       
     }
 }

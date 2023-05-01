@@ -1,7 +1,10 @@
 ﻿
+using Azure.Core;
 using Caritas.Insfrastructure.Helpers;
+using Caritas.Insfrastructure.Model;
 using Caritas.Web.DTOs;
 using Caritas.Web.Extensions;
+using DsCommon;
 using DsCommon.Enums;
 using DsCommon.IUnitOfWorkPatern;
 using DsCommon.ModelsApi;
@@ -10,7 +13,10 @@ using DsCommon.ModelsView;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Data;
+using System.Linq.Expressions;
 using System.Security.Claims;
 
 namespace Caritas.Web.Controllers
@@ -30,39 +36,40 @@ namespace Caritas.Web.Controllers
         [Authorize(Roles = "Administrador,Usuario")]
         public IActionResult Index()
         {
-            var model = new TableUIExt()
-            {                
-                Metodo = "GET",
-                IsServerSide = "false",
-                CreateUrl = "Users",
-                IsOnModalCreate = false,
-                WidthAcciones = "15%",
-                ViewOrder = new OrderUI[] {
-                    new OrderUI() { Order = 2 },
-                },
-                Dom = "Bfrtip",
-                ApiUrl = "/Users/GetAll",
-                Fields = new FieldUI[] {
-                    new FieldUI() { Label = "Usuario", Data = "email", ColumWidth = "10%" },
-                    new FieldUI() { Label = "Nombre", Data = "nombre", ColumWidth = "30%" },
-                    new FieldUI() { Label = "Teléfono", Data = "phoneNumber", ColumWidth = "10%" },
-                    new FieldUI() { Label = "Rol Principal", Data = "role", ColumWidth = "10%" },
-                    new FieldUI() { Label = "Status", Data = "status", ColumWidth = "10%" },
-                },
-                Methods = new MethodsUI[] {
-                    new MethodsUI() {Icono="fa fa-eye",titulo="Detalles",Url="/Users/Detail",Clase="btn btn-info btn-sm" },
-                    new MethodsUI() {Icono="fa fa-pencil",titulo="Editar",Url="/Users/Edit",Clase="btn btn-primary btn-sm",IsOnModal=false },
-                    new MethodsUI() {Icono="fa fa-trash",titulo="Borrar",Url="/Users/Delete",Clase="btn btn-danger btn-sm" },
-                }
-            };
+            //var model = new TableUIExt()
+            //{
+            //    Metodo = "GET",
+            //    IsServerSide = "false",
+            //    CreateUrl = "Users",
+            //    IsOnModalCreate = false,
+            //    WidthAcciones = "15%",
+            //    ViewOrder = new OrderUI[] {
+            //        new OrderUI() { Order = 2 },
+            //    },
+            //    Dom = "Bfrtip",
+            //    ApiUrl = "/Users/GetAll",
+            //    Fields = new FieldUI[] {
+            //        new FieldUI() { Label = "Usuario", Data = "email", ColumWidth = "10%" },
+            //        new FieldUI() { Label = "Nombre", Data = "nombre", ColumWidth = "30%" },
+            //        new FieldUI() { Label = "Teléfono", Data = "phoneNumber", ColumWidth = "10%" },
+            //        new FieldUI() { Label = "Rol Principal", Data = "role", ColumWidth = "10%" },
+            //        new FieldUI() { Label = "Status", Data = "status", ColumWidth = "10%" },
+            //    },
+            //    Methods = new MethodsUI[] {
+            //        new MethodsUI() {Icono="fa fa-eye",titulo="Permisos",Url="/Users/Permisos",Clase="btn btn-info btn-sm" },
+            //        new MethodsUI() {Icono="fa fa-eye",titulo="Detalles",Url="/Users/Detail",Clase="btn btn-info btn-sm" },
+            //        new MethodsUI() {Icono="fa fa-pencil",titulo="Editar",Url="/Users/Edit",Clase="btn btn-primary btn-sm",IsOnModal=false },
+            //        new MethodsUI() {Icono="fa fa-trash",titulo="Borrar",Url="/Users/Delete",Clase="btn btn-danger btn-sm" },
+            //    }
+            //};
 
             ViewBag.titulo = "Listado de Usuarios";
             ViewData["Title"] = "Usuarios";
             ViewData["TableTitle"] = "Listado de Usuarios";
 
-         
+            TempData["page_function_js"] = "/js/functions/function_user.js";
 
-            return View("~/Views/Shared/_TableViewExt.cshtml", model);
+            return View();       
         }
 
         [HttpGet]
@@ -392,6 +399,44 @@ namespace Caritas.Web.Controllers
             }
         }
 
-      
+        [HttpGet]
+        public async Task<IActionResult> Permisos(string id)
+        {
+
+            var userId = HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var accessToken = HttpContext.User.Claims.First(c => c.Type == "access_token").Value;
+            var modulos = await _unitWork.Usuarios.GetModuleUserAsync<List<ModulosUserViewModel>>(accessToken,Convert.ToInt32(SDRutas.CompaniaId) ,userId);
+
+            string sTabla = "";
+
+            if (modulos != null)
+            {
+                int no = 0;
+                foreach (var item in modulos)
+                {
+                    string rCheck = item.Permisos.R == "1" ? " checked" : "";
+                    string wCheck = item.Permisos.W == "1" ? " checked" : "";
+                    string uCheck = item.Permisos.U == "1" ? " checked" : "";
+                    string dCheck = item.Permisos.D == "1" ? " checked" : "";
+
+                    sTabla += "<tr>";
+                    sTabla += "<td>" + item.Id + "<input type ='hidden' name = 'modulos[" + item.Id + "][idmodulo]' value = '" + item.Id + "' required /> </td>";
+                    sTabla += "<td>" + item.Titulo + "<input type ='hidden' name = 'rol[" + item.Id + "][idrol]' value = '" + item.Permisos.ApplicationModuloUserId + "' required /> </td>";
+                    sTabla += "<td><div class='toggle-flip'><label><input type='checkbox' name='modulos[" + item.Id + "][r]'" + rCheck + "/><span class='flip-indecator' data-toggle-on='ON' data-toggle-off='OFF'></span></label></div></td>";
+                    sTabla += "<td><div class='toggle-flip'><label><input type='checkbox' name='modulos[" + item.Id + "][w]'" + wCheck + "/><span class='flip-indecator' data-toggle-on='ON' data-toggle-off='OFF'></span></label></div></td>";
+                    sTabla += "<td><div class='toggle-flip'><label><input type='checkbox' name='modulos[" + item.Id + "][u]'" + uCheck + "/><span class='flip-indecator' data-toggle-on='ON' data-toggle-off='OFF'></span></label></div></td>";
+                    sTabla += "<td><div class='toggle-flip'><label><input type='checkbox' name='modulos[" + item.Id + "][d]'" + dCheck + "/><span class='flip-indecator' data-toggle-on='ON' data-toggle-off='OFF'></span></label></div></td>";
+                    sTabla += "</tr>";
+
+
+
+                    no += 1;
+                }
+            }
+
+
+
+            return Ok(sTabla);
+        }
     }
 }

@@ -22,6 +22,7 @@ namespace DsCommon.Services
         Task<T> DeleteUserAsync<T>(string id, string token);
         Task<string> EnviarEmail(EmailViewModel model);
         Task<string> ResetPassword(ResetPasswordViewModel model);
-        
+        Task<T> GetModuleUserAsync<T>(string token, int companiaId, string UserId);
+
     }
 }
