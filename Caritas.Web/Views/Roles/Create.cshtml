@@ -1,0 +1,43 @@
+﻿@using DsCommon.Enums
+@model Caritas.Web.DTOs.RoleDto
+
+<!-- Modal -->
+
+<div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+        <div class="modal-header headerRegister">
+            <h5 class="modal-title" id="titleModal">@ViewBag.Title</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="tile">
+                <div class="tile-body">
+                    <form asp-action="Create">
+                        <div class="form-group">
+                            <label class="control-label">Nombre</label>
+                            <input asp-for="Name" class="form-control" type="text" placeholder="Nombre del Rol">
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>Estado</label>
+                            <select class="form-control" asp-for="Status" required=""
+                                    asp-items="Html.GetEnumSelectList<EstadoEnum>()">
+                            </select>
+                        </div>
+                        <div class="tile-footer">
+                            <button id="btnActionForm" class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i><span id="btnText">Guardar</span></button>&nbsp;&nbsp;&nbsp;
+                            <a class="btn btn-secondary" href="#" data-bs-dismiss="modal"><i class="fa fa-fw fa-lg fa-times-circle"></i>Cancelar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}

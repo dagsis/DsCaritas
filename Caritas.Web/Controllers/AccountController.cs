@@ -71,7 +71,14 @@ namespace Caritas.Web.Controllers
                     new Claim(ClaimTypes.Role,result?.Roles?.FirstOrDefault()!),
                     new Claim("access_token", result?.Token!),
                     new Claim("compania", result?.CompaniaId.ToString()!)
-            };
+
+                };
+
+                foreach (var claim in result.Claims!)
+                {
+                    var claim1 = new Claim(claim.Clave, claim.Valor);
+                    claims.Add(claim1);
+                }
 
                 var claimsIdentity = new ClaimsIdentity(
                     claims, CookieAuthenticationDefaults.AuthenticationScheme);

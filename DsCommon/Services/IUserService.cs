@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,12 +20,8 @@ namespace DsCommon.Services
         Task<string> GeneratePasswordResetTokenAsync(string email);
         Task<T> ChangePassword<T>(ChangePasswordViewModel model, string token, string userId);
         Task<T> DeleteUserAsync<T>(string id, string token);
-        Task<T> GetAllRolAsync<T>(string token);
-        Task<T> GetARolByAsync<T>(string id, string token);
-        Task<T> CreateRol<T>(RoleViewModel model, string token);
-        Task<T> UpdateRol<T>(RoleViewModel model, string token);
-        Task<T> DeleteRolAsync<T>(string id, string token);
         Task<string> EnviarEmail(EmailViewModel model);
         Task<string> ResetPassword(ResetPasswordViewModel model);
+        
     }
 }

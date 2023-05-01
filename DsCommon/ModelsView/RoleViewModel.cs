@@ -13,6 +13,7 @@ namespace DsCommon.ModelsView
 
         [Required(ErrorMessage = "Campo Requerido")]
         public string Name { get; set; }
+        public int CompaniaId { get; set; }
         public int Estado { get; set; }
         public string Status { get; set; }
     }

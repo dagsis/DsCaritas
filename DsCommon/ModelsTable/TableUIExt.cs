@@ -47,6 +47,9 @@ namespace DsCommon.ModelsTable
         [JsonProperty("methods")]
         public MethodsUI[]? Methods { get; set; }
 
+        [JsonProperty("isCreateAllow")]
+        public bool IsCreateAllow { get; set; } = true;
+
 
         public string FieldString
         {
@@ -101,7 +104,6 @@ namespace DsCommon.ModelsTable
             }
         }
 
-        [JsonProperty("isCreateAllow")]
-        public bool IsCreateAllow => !string.IsNullOrEmpty(CreateUrl);
+      
     }
 }

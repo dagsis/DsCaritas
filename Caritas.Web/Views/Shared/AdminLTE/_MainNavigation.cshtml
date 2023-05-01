@@ -1,4 +1,12 @@
-﻿@using static Caritas.Web.Helpers.NavigationIndicatorHelper;
+﻿@using Microsoft.AspNetCore.Authorization;
+@using static Caritas.Web.Helpers.NavigationIndicatorHelper;
+
+@inject IAuthorizationService authorizationService;
+@{
+    string[] allowedUsers = { "Carlos D' Agostino", "alice" };
+    var claimsViewCliente = await authorizationService.AuthorizeAsync(User, "ViewClientes", "ViewClientes");
+
+}
 
 <aside class="main-sidebar">
     <!-- sidebar-->
@@ -36,6 +44,7 @@
                             </a>
                             <ul class="treeview-menu">
                                 <li><a asp-action="Index" asp-controller="Users"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Usuarios</a></li>
+                                <li><a asp-action="Index" asp-controller="Roles"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Roles</a></li>
                             </ul>
                         </li>
                         <li class="treeview">
@@ -64,7 +73,10 @@
                         </a>
                         <ul class="treeview-menu">
                             <li><a asp-action="Index" asp-controller="Adjudicados"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Adjudicados</a></li>
+                            @if (claimsViewCliente.Succeeded)
+                                {
                             <li><a asp-action="Index" asp-controller="Clientes"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Clientes</a></li>
+                                }
                             <li><a asp-action="Index" asp-controller="Inhumados"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Inhumados</a></li>
                         </ul>
                     </li>

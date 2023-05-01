@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DsCommon.ModelsView
 {
@@ -48,5 +49,6 @@ namespace DsCommon.ModelsView
 
         [Required(ErrorMessage = "Campo Requerido")]
         public int CompaniaId { get; set; }
+       // public List<SelectListItem> UserClaims { get; set; }
     }
 }

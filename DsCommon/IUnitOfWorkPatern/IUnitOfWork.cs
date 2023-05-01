@@ -10,6 +10,8 @@ namespace DsCommon.IUnitOfWorkPatern
     public interface IUnitOfWork : IDisposable
     {
         IUserService Usuarios { get; }
+        IRoleService Roles { get; }
+
         IRepository<TEntity> Repository<TEntity>() where TEntity : class;
         Task<int> Complete();
     }

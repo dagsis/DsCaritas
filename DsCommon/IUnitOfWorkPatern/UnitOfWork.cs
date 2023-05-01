@@ -1,4 +1,5 @@
 ﻿using Caritas.Insfrastructure.Data;
+using DsCommon.Helpers;
 using DsCommon.Services;
 using System.Collections;
 
@@ -11,6 +12,7 @@ namespace DsCommon.IUnitOfWorkPatern
       //  private readonly IHttpClientFactory _clienteFactory;
 
         public IUserService Usuarios { get; private set; }
+        public IRoleService Roles { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context, IHttpClientFactory clienteFactory)
         {
@@ -18,6 +20,8 @@ namespace DsCommon.IUnitOfWorkPatern
          //   _clienteFactory = clienteFactory;
 
             Usuarios = new UserService(clienteFactory);
+            Roles = new RoleService(clienteFactory);
+            
         }
 
         public async Task<int> Complete()

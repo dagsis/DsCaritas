@@ -1,4 +1,6 @@
-﻿namespace Caritas.Web.Models
+﻿using System.Security.Claims;
+
+namespace Caritas.Web.Models
 {
     public class IdentityAccess
     {
@@ -11,5 +13,12 @@
         public int CompaniaId { get; set; }
 
         public ICollection<string> Roles { get; set; }
+        public ICollection<UserClaims> Claims { get; set; }
+    }
+
+    public class UserClaims
+    {
+        public string Clave { get; set; }
+        public string Valor { get; set; }
     }
 }
