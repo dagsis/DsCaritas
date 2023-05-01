@@ -12,6 +12,7 @@ namespace DsCommon
         public static string? GateWayAPIBase { get; set; }
         public static string? IdentityApiBase { get; set; }
         public static int? CompaniaId { get; set; } = 0;
+        public static int? AplicacionId { get; set; } = 0;
         public enum ApiType
         {
             GET,

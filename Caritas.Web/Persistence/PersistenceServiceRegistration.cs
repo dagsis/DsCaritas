@@ -26,6 +26,7 @@ namespace Caritas.Web.Persistence
             SDRutas.IdentityApiBase = configuration["AuthenticationUrl"];
             SDRutas.EmailApiBase = configuration["ApiEmailUrl"];
             SDRutas.CompaniaId = Convert.ToInt32(configuration["Sistema:CompaniaId"]);
+            SDRutas.AplicacionId = Convert.ToInt32(configuration["Sistema:AplicacionId"]);
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserService, UserService>();

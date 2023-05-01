@@ -13,9 +13,9 @@ document.addEventListener('DOMContentLoaded', function () {
         "language": {
             "url": "https://cdn.datatables.net/plug-ins/1.10.19/i18n/Spanish.json"
         },
-        "columns": [
-            { "data": "email", "width": "10%" },
-            { "data": "nombre", "width": "30%" }, 
+            "columns": [           
+            { "data": "email", "width": "20%" },
+            { "data": "nombre", "width": "20%" }, 
             { "data": "phoneNumber", "width": "10%" }, 
             { "data": "role", "width": "10%" }, 
             { "data": "status", "width": "10%" },
@@ -24,7 +24,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 "render": function (data) {
                     return `
                             <div class="text-center">
-                                 <button onclick=fntPermisos("/Users/Permisos/${data}") class="btn btn-info btn-sm" title ="Permisos">
+                                 <button onclick=fntPermisos("/Users/Permisos/${data}") class="btn btn-success btn-sm" title ="Permisos">
+                                    <i class="fa fa-lock"></i>
+                                </button>
+                                 <button onclick=fntAbrir("/Users/Detail/${data}") class="btn btn-info btn-sm" title ="Detalle">
                                     <i class="fa fa-eye"></i>
                                 </button>
                                 <a href="/Users/Edit/${data}") class="btn btn-primary btn-sm" title ="Editar">
@@ -94,7 +97,7 @@ function fntSavePermisos(evnet) {
     divLoading.style.display = "flex";
 
     var request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-    var ajaxUrl = '/Roles/SetPermisos';
+    var ajaxUrl = '/Users/SetPermisos';
     var formElement = document.querySelector("#formPermisos");
     var formData = new FormData(formElement);
     request.open("POST", ajaxUrl, true);

@@ -9,7 +9,8 @@ namespace DsCommon.ModelsView
     public class ModulosUserViewModel
     {
         public int Id { get; set; }
-        public int CompaniaId { get; set; }
+        public int Codigo { get; set; }
+        public int AplicacionId { get; set; }
         public string Titulo { get; set; }
         public string Descripcion { get; set; }
         public PermisosUserViewModel Permisos { get; set; }

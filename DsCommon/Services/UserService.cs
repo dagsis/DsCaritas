@@ -138,12 +138,12 @@ namespace DsCommon.Services
             });
         }
 
-        public async Task<T> GetModuleUserAsync<T>(string token, int companiaId, string userId)
+        public async Task<T> GetModuleUserAsync<T>(string token, int aplicacionId, string userId)
         {
             return await this.SendAsync<T>(new ApiRequest()
             {
                 ApiType = SDRutas.ApiType.GET,
-                Url = SDRutas.IdentityApiBase + "/v1/User/userModule/" + userId + "/" + companiaId,
+                Url = SDRutas.IdentityApiBase + "/v1/User/userModule/" + userId + "/" + aplicacionId,
                 AccessToken = token
             });
         }

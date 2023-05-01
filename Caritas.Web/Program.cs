@@ -1,39 +1,11 @@
-using Caritas.Common.Models;
-using Caritas.Insfrastructure;
-using Caritas.Insfrastructure.Data;
 using Caritas.Web.Persistence;
-using Caritas.Web.Services;
-using DsCommon.Helpers;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System.Globalization;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 builder.Services.AddPersistenceServices(builder.Configuration);
-
- string[] myUserList = { "Carlos D' Agostino", "user2", "user3" };
-
-
-//builder.Services.AddAuthorization(options =>
-// {
-
-//     options.AddPolicy("ViewClientes",
-//               policy => policy.RequireAssertion(
-//                     context => myUserList.Contains(context.User.Identity.Name)));
-
-//     //options.AddPolicy("ViewClientes", policy => policy.RequireClaim("ViewClientes", "True"));
-//     //  options.AddPolicy("ViewClientes", policy => policy.RequireUserName("Carlos D' Agostino")); 
-// });
 
 //builder.Services.AddTransient<IAuthorizationHandler, AllowPrivateHandler>();
 builder.Services.AddAuthorization(opts =>
@@ -45,12 +17,6 @@ builder.Services.AddAuthorization(opts =>
 
     opts.AddPolicy("ViewClientes", policy => policy.RequireClaim("ViewClientes", "True"));
 
-    //opts.AddPolicy("AddEditCliente", policy => {
-    //    policy.RequireClaim("ViewClientes", "True");
-    //    policy.RequireClaim("Add User", "Add User");
-    //    policy.RequireClaim("Edit User", "Edit User");
-    //});
-    //opts.AddPolicy("DeleteUser", policy => policy.RequireClaim("Delete User", "Delete User"));
 });
 
 
