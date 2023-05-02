@@ -19,11 +19,10 @@ namespace Caritas.Web.DTOs
         public string Nombre { get; set; }
         public string Domicilio { get; set; }
 
-        [Required(ErrorMessage = "Campo Requerido")]
         [PrimeraLetraMayuscula()]
         public string Localidad { get; set; }
         public string CodigoPostal { get; set; }
-   
+
         public string Telefono { get; set; }
 
         [Required(ErrorMessage = "Campo Requerido")]
@@ -31,9 +30,10 @@ namespace Caritas.Web.DTOs
         public string Dest { get; set; }
         public string EstadoC { get; set; }
 
-        [Required(ErrorMessage = "Campo Requerido")]
         [EmailAddress(ErrorMessage = "El campo debe ser un correo electrónico válido")]
         public string Email { get; set; }
+
+        [EmailAddress(ErrorMessage = "El campo debe ser un correo electrónico válido")]
         public string Email2 { get; set; }
         public string Celular { get; set; }
         public string Observaciones { get; set; }

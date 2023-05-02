@@ -80,5 +80,15 @@ namespace DsCommon.Services
                 AccessToken = token
             });
         }
+
+        public async Task<T> GetModuleRoleAsync<T>(string token, int aplicacionId, string roleId)
+        {
+            return await this.SendAsync<T>(new ApiRequest()
+            {
+                ApiType = SDRutas.ApiType.GET,
+                Url = SDRutas.IdentityApiBase + "/v1/Role/roleModule/" + roleId + "/" + aplicacionId,
+                AccessToken = token
+            });
+        }
     }
 }

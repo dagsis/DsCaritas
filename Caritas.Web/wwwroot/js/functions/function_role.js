@@ -2,36 +2,28 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-    tableDatos = $('#tableUser')  
+    tableDatos = $('#tableRoles')  
         .DataTable({       
   //      "aProcessing":true,
 		//"aServerSide": true,
         "ajax": {
-            "url": "/Users/GetAll",          
+            "url": "/Roles/GetAll",          
             },
         "Dom ": "Bfrtip",
         "language": {
             "url": "https://cdn.datatables.net/plug-ins/1.10.19/i18n/Spanish.json"
         },
             "columns": [           
-            { "data": "email", "width": "20%" },
-            { "data": "nombre", "width": "20%" }, 
-            { "data": "phoneNumber", "width": "10%" }, 
-            { "data": "role", "width": "10%" }, 
+            { "data": "id", "width": "20%" },
+            { "data": "name", "width": "20%" }, 
             { "data": "status", "width": "10%" },
             {
                 "data": "id",
                 "render": function (data) {
                     return `
-                            <div class="text-center">                               
-                                 <button onclick=fntAbrir("/Users/Detail/${data}") class="btn btn-info btn-sm" title ="Detalle">
-                                    <i class="fa fa-eye"></i>
-                                </button>
-                                <a href="/Users/Edit/${data}") class="btn btn-primary btn-sm" title ="Editar">
-                                    <i class="fa fa-pencil"></i>
-                                </a>
-                                <button onclick=fntAbrir("/Users/Delete/${data}") class="btn btn-danger btn-sm" title ="Eliminar">
-                                   <i class="fa fa-trash"></i>
+                            <div class="text-center">
+                                 <button onclick=fntPermisos("/Roles/Permisos/${data}") class="btn btn-success btn-sm" title ="Permisos">
+                                    <i class="fa fa-lock"></i>
                                 </button>
                             </div>
                            `;
@@ -58,10 +50,6 @@ function fntAbrir(url) {
     openmodal(url);
 }
 
-
-//<button onclick=fntPermisos("/Users/Permisos/${data}") class="btn btn-success btn-sm" title = "Permisos" >
-//    <i class="fa fa-lock"></i>
-//</button > 
 
 //function openModal() {
 //    document.querySelector('#idRol').value = "";
@@ -98,7 +86,7 @@ function fntSavePermisos(evnet) {
     divLoading.style.display = "flex";
 
     var request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
-    var ajaxUrl = '/Users/SetPermisos';
+    var ajaxUrl = '/Roles/SetPermisos';
     var formElement = document.querySelector("#formPermisos");
     var formData = new FormData(formElement);
     request.open("POST", ajaxUrl, true);

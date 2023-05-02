@@ -23,6 +23,5 @@ namespace DsCommon.Services
         Task<string> EnviarEmail(EmailViewModel model);
         Task<string> ResetPassword(ResetPasswordViewModel model);
         Task<T> GetModuleUserAsync<T>(string token, int aplicacionId, string UserId);
-
     }
 }

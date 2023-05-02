@@ -1,0 +1,33 @@
+﻿@{
+    Layout = "~/Views/Shared/AdminLTE/_Layout.cshtml";
+}
+<partial name="AdminLTE/_Notifications">
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">@ViewData["TableTitle"]</h3>
+            <div class="card-tools">
+                <a class="btn btn-primary" asp-action="Create" asp-controller="Users">
+                    <i class="fa fa-plus"></i>
+                    Nuevo
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="tableRoles" class="table table-striped table-bordered table-hover" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nombre</th>
+                            <th>Status</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <partial name="~/Views/Modals/_ModalPermisos.cshtml" />

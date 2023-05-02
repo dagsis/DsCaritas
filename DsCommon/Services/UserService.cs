@@ -146,6 +146,6 @@ namespace DsCommon.Services
                 Url = SDRutas.IdentityApiBase + "/v1/User/userModule/" + userId + "/" + aplicacionId,
                 AccessToken = token
             });
-        }
+        }     
     }
 }
