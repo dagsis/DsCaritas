@@ -8,6 +8,7 @@ using DsCommon.ModelsTable;
 using DsCommon.ModelsView;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Security.Claims;
 
 namespace Caritas.Web.Controllers
@@ -26,34 +27,7 @@ namespace Caritas.Web.Controllers
         [Breadcrumb("Lista de Roles")]
         [Authorize(Roles = "Usuario")]
         public IActionResult Index()
-        {
-            //var model = new TableUIExt()
-            //{
-            //    Metodo = "GET",
-            //    IsServerSide = "false",
-            //    CreateUrl = "Roles",                                
-            //    IsOnModalCreate = true,
-            //    IsCreateAllow = false,
-            //    WidthAcciones = "20%",
-            //    ViewOrder = new OrderUI[] {
-            //        new OrderUI() { Order = 1 },
-            //    },                
-            //    Dom = "Bfrtip",
-            //    ApiUrl = "/Roles/GetAll",
-            //    Fields = new FieldUI[] {
-            //    new FieldUI() { Label = "Id", Data = "id", ColumWidth = "30%" },
-            //        new FieldUI() { Label = "Nombre", Data = "name", ColumWidth = "50%" },
-            //        new FieldUI() { Label = "Estado", Data = "status", ColumWidth = "10%" }
-            //    },
-            //    Methods = new MethodsUI[] {
-            //        new MethodsUI() {Icono="fa fa-eye",titulo="Permisos",Url="/Roles/Permisos",Clase="btn btn-info btn-sm" },
-            //    }
-            //};
-            //ViewData["Title"] = "Roles";
-            //ViewData["TableTitle"] = "Listado de Roles";
-
-            //return View("~/Views/Shared/_TableViewExt.cshtml", model);
-
+        {            
             ViewBag.titulo = "Listado de Roles";
             ViewData["Title"] = "Roles";
             ViewData["TableTitle"] = "Listado de Roles";
@@ -62,7 +36,7 @@ namespace Caritas.Web.Controllers
             return View();
         }
 
-            [HttpGet]
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var accessToken = HttpContext.User.Claims.First(c => c.Type == "access_token").Value;
@@ -137,9 +111,9 @@ namespace Caritas.Web.Controllers
         public async Task<IActionResult> Permisos(string id)
         {
 
-            var userId = HttpContext.User.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
+            var roleId = id;
             var accessToken = HttpContext.User.Claims.First(c => c.Type == "access_token").Value;
-            var modulos = await _unitWork.Roles.GetModuleRoleAsync<List<ModulosRoleViewModel>>(accessToken, Convert.ToInt32(SDRutas.AplicacionId), userId);
+            var modulos = await _unitWork.Roles.GetModuleRoleAsync<List<ModulosRoleViewModel>>(accessToken, Convert.ToInt32(SDRutas.AplicacionId), roleId);
 
             string sTabla = "";
 
@@ -154,12 +128,12 @@ namespace Caritas.Web.Controllers
                     string dCheck = item.Permisos.D == "1" ? " checked" : "";
 
                     sTabla += "<tr>";
-                    sTabla += "<td>" + item.Codigo + "<input type ='hidden' name = 'modulos[" + item.Id + "][idmodulo]' value = '" + item.Id + "' required /> </td>";
-                    sTabla += "<td>" + item.Titulo + "<input type ='hidden' name = 'user[" + item.Id + "][iduser]' value = '" + item.Permisos.ApplicationModuloUserId + "' required /> </td>";
-                    sTabla += "<td><div class='toggle-flip'><label><input type='checkbox' name='modulos[" + item.Id + "][r]'" + rCheck + "/><span class='flip-indecator' data-toggle-on='ON' data-toggle-off='OFF'></span></label></div></td>";
-                    sTabla += "<td><div class='toggle-flip'><label><input type='checkbox' name='modulos[" + item.Id + "][w]'" + wCheck + "/><span class='flip-indecator' data-toggle-on='ON' data-toggle-off='OFF'></span></label></div></td>";
-                    sTabla += "<td><div class='toggle-flip'><label><input type='checkbox' name='modulos[" + item.Id + "][u]'" + uCheck + "/><span class='flip-indecator' data-toggle-on='ON' data-toggle-off='OFF'></span></label></div></td>";
-                    sTabla += "<td><div class='toggle-flip'><label><input type='checkbox' name='modulos[" + item.Id + "][d]'" + dCheck + "/><span class='flip-indecator' data-toggle-on='ON' data-toggle-off='OFF'></span></label></div></td>";
+                    sTabla += "<td>" + item.Codigo + "<input type ='hidden' name = 'modulos[" + item.Codigo + "][idmodulo]' value = '" + item.Codigo + "' required /> </td>";
+                    sTabla += "<td>" + item.Titulo + "<input type ='hidden' name = 'role[" + item.Codigo + "][idrole]' value = '" + item.Permisos.ApplicationRoleId + "' required /> </td>";
+                    sTabla += "<td><div class='toggle-flip'><label><input type='checkbox' name='modulos[" + item.Codigo + "][r]'" + rCheck + "/><span class='flip-indecator' data-toggle-on='ON' data-toggle-off='OFF'></span></label></div></td>";
+                    sTabla += "<td><div class='toggle-flip'><label><input type='checkbox' name='modulos[" + item.Codigo + "][w]'" + wCheck + "/><span class='flip-indecator' data-toggle-on='ON' data-toggle-off='OFF'></span></label></div></td>";
+                    sTabla += "<td><div class='toggle-flip'><label><input type='checkbox' name='modulos[" + item.Codigo + "][u]'" + uCheck + "/><span class='flip-indecator' data-toggle-on='ON' data-toggle-off='OFF'></span></label></div></td>";
+                    sTabla += "<td><div class='toggle-flip'><label><input type='checkbox' name='modulos[" + item.Codigo + "][d]'" + dCheck + "/><span class='flip-indecator' data-toggle-on='ON' data-toggle-off='OFF'></span></label></div></td>";
                     sTabla += "</tr>";
 
 
@@ -176,128 +150,28 @@ namespace Caritas.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> SetPermisos(IFormCollection formdata)
         {
-            string usuario = formdata["user[1][iduser]"];
-
-            // var role = _db.ApplicationRols.FirstOrDefault(r => r.Id == usuario);
+            var accessToken = HttpContext.User.Claims.First(c => c.Type == "access_token").Value;
+            string role = formdata["role[1][idrole]"];
 
             var mod = formdata.Where(e => e.Key.Contains("modulos")).ToList();
 
-            //var user = await userManager.FindByNameAsync(User.Identity.Name);
-            //var claims = await userManager.GetClaimsAsync(user);
-            //var result = await userManager.RemoveClaimsAsync(user, claims);
+            var valor = JsonConvert.SerializeObject(mod);
 
-            //claims = await _userHelper.GetRoleClaimsAsync(role);
-
-            //foreach (var item in claims)
-            //{
-            //    await roleManager.RemoveClaimAsync(role, item);
-            //}
-
-
-            for (int i = 1; i <= mod.Count(); i++)
+            var valorPermiso = new ValorRoleviewModel()
             {
-                var a = mod.Where(e => e.Key.Contains("modulos[" + i + "]")).ToList();
-                if (a.Count() > 0)
-                {
-                    var idModulo = a[0].Value;
+                RoleId = role,
+                Values = valor
+            };
 
-                    var r = a.Where(e => e.Key.Contains("[r]"));
-                    string rRead = r.Count() > 0 ? "1" : "0";
+            var result = await _unitWork.Roles.SetModuleRoleAsync<ResponseDto>(valorPermiso, accessToken);
 
-                    var w = a.Where(e => e.Key.Contains("[w]"));
-                    string wWrite = w.Count() > 0 ? "1" : "0";
-
-                    var u = a.Where(e => e.Key.Contains("[u]"));
-                    string uUpdate = u.Count() > 0 ? "1" : "0";
-
-                    var d = a.Where(e => e.Key.Contains("[d]"));
-                    string dDelete = d.Count() > 0 ? "1" : "0";
-
-                    //try
-                    //{
-                    //    var permisoDel = _db.ApplicationPermisos.Where(r => r.ApplicationModuloId == i && r.ApplicationRolId == rol).ToList();
-
-                    //    _db.ApplicationPermisos.RemoveRange(permisoDel);
-
-                    //    var permisoAdd = new ApplicationPermisos()
-                    //    {
-                    //        ApplicationRolId = rol,
-                    //        ApplicationModuloId = Convert.ToInt32(idModulo),
-                    //        R = rRead,
-                    //        W = wWrite,
-                    //        U = uUpdate,
-                    //        D = dDelete
-                    //    };
-
-
-                    //    switch (permisoAdd.ApplicationModuloId)
-                    //    {
-                    //        case 1:
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("ViewDashBoard", permisoAdd.R == "1" ? "True" : "False"));
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("CreateDashBoard", permisoAdd.W == "1" ? "True" : "False"));
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("UpdateDashBoard", permisoAdd.U == "1" ? "True" : "False"));
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("DeleteDashBoard", permisoAdd.D == "1" ? "True" : "False"));
-                    //            break;
-                    //        case 2:
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("ViewUsuarios", permisoAdd.R == "1" ? "True" : "False"));
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("CreateUsuario", permisoAdd.W == "1" ? "True" : "False"));
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("UpdateUsuario", permisoAdd.U == "1" ? "True" : "False"));
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("DeleteUsuario", permisoAdd.D == "1" ? "True" : "False"));
-                    //            break;
-                    //        case 3:
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("ViewClientes", permisoAdd.R == "1" ? "True" : "False"));
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("CreateCliente", permisoAdd.W == "1" ? "True" : "False"));
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("UpdateCliente", permisoAdd.U == "1" ? "True" : "False"));
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("DeleteCliente", permisoAdd.D == "1" ? "True" : "False"));
-                    //            break;
-                    //        case 4:
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("ViewProductos", permisoAdd.R == "1" ? "True" : "False"));
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("CreateProducto", permisoAdd.W == "1" ? "True" : "False"));
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("UpdateProducto", permisoAdd.U == "1" ? "True" : "False"));
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("DeleteProducto", permisoAdd.D == "1" ? "True" : "False"));
-                    //            break;
-                    //        case 5:
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("ViewCategorias", permisoAdd.R == "1" ? "True" : "False"));
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("CreateCategoria", permisoAdd.W == "1" ? "True" : "False"));
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("UpdateCategoria", permisoAdd.U == "1" ? "True" : "False"));
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("DeleteCategoria", permisoAdd.D == "1" ? "True" : "False"));
-                    //            break;
-                    //        case 6:
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("ViewPedidos", permisoAdd.R == "1" ? "True" : "False"));
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("CreatePedido", permisoAdd.W == "1" ? "True" : "False"));
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("UpdatePedido", permisoAdd.U == "1" ? "True" : "False"));
-                    //            await this.roleManager.AddClaimAsync(role, new Claim("DeletePedido", permisoAdd.D == "1" ? "True" : "False"));
-                    //            break;
-                    //        default:
-                    //            break;
-                    //    }
-
-                    //    _db.ApplicationPermisos.Add(permisoAdd);
-
-                    //}
-                    //catch (Exception ex)
-                    //{
-
-                    //    return Json(new { status = false, msg = ex.Message });
-                    //}
-
-                }
-
-            }
-
-            try
+            if (result.success)
             {
-                // _db.SaveChanges();
-
+                return Json(new { status = true, msg = "Permisos Asignados Correctamente" });
             }
-            catch (Exception ex)
-            {
-
-                return Json(new { status = false, msg = ex.Message });
-            }
-
 
             return Json(new { status = true, msg = "Permisos Asignados Correctamente" });
+                   
         }
     }
 }

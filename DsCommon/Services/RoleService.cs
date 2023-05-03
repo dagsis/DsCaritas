@@ -90,5 +90,16 @@ namespace DsCommon.Services
                 AccessToken = token
             });
         }
+
+        public async Task<T> SetModuleRoleAsync<T>(ValorRoleviewModel model,string token)
+        {
+            return await this.SendAsync<T>(new ApiRequest()
+            {
+                ApiType = SDRutas.ApiType.POST,
+                Data = model,
+                Url = SDRutas.IdentityApiBase + "/v1/role/setModule",
+                AccessToken = token
+            });
+        }
     }
 }

@@ -17,6 +17,7 @@ namespace DsCommon.Services
         Task<T> DeleteRolAsync<T>(string id, string token);
         Task<bool> CheckRoleAsync(string roleName,int companiaId,string token);
         Task<T> GetModuleRoleAsync<T>(string token, int aplicacionId, string RoleId);
+        Task<T> SetModuleRoleAsync<T>(ValorRoleviewModel model,string token);
 
     }
 }
