@@ -4,8 +4,12 @@
 @inject IAuthorizationService authorizationService;
 @{
     string[] allowedUsers = { "Carlos D' Agostino", "alice" };
-    var claimsViewCliente = await authorizationService.AuthorizeAsync(User, "ViewClientes", "ViewClientes");
-
+    // var claimsViewCliente = await authorizationService.AuthorizeAsync(User, "ViewClientes", "ViewClientes");
+    var claimsViewMaestros = await authorizationService.AuthorizeAsync(User, "ViewMaestros");
+    var claimsViewTablas = await authorizationService.AuthorizeAsync(User, "ViewTablas");
+    var claimsViewDashBoard = await authorizationService.AuthorizeAsync(User, "ViewDashBoard");
+    var claimsViewUsuarios = await authorizationService.AuthorizeAsync(User, "ViewUsuarios");
+    var claimsViewAdministracion = await authorizationService.AuthorizeAsync(User, "ViewAdministracion");
 }
 
 <aside class="main-sidebar">
@@ -47,21 +51,24 @@
                                 <li><a asp-action="Index" asp-controller="Roles"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Roles</a></li>
                             </ul>
                         </li>
-                        <li class="treeview">
-                            <a href="#">
-                                <i data-feather="tablet"></i>
-                                <span>Tablas</span>
-                                <span class="pull-right-container">
-                                    <i class="fa fa-angle-right pull-right"></i>
-                                </span>
-                            </a>
-                            <ul class="treeview-menu">
-                                <li><a asp-action="Index" asp-controller="Conceptos"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Conceptos</a></li>
-                                <li><a asp-action="Index" asp-controller="FormaPagos" class="nav-link @Url.MakeActiveClass("Monedas", "Index")"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Formas de Pago</a></li>
-                                <li><a asp-action="Index" asp-controller="TipoUbicación"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Tipo Ubicaciòn</a></li>
-                                <li><a asp-action="Index" asp-controller="Ubicación"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Ubicación</a></li>
-                            </ul>
-                        </li>
+                        if (claimsViewTablas.Succeeded)
+                        {
+                            <li class="treeview">
+                                <a href="#">
+                                    <i data-feather="tablet"></i>
+                                    <span>Tablas</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-right pull-right"></i>
+                                    </span>
+                                </a>
+                                <ul class="treeview-menu">
+                                    <li><a asp-action="Index" asp-controller="Conceptos"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Conceptos</a></li>
+                                    <li><a asp-action="Index" asp-controller="FormaPagos" class="nav-link @Url.MakeActiveClass("Monedas", "Index")"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Formas de Pago</a></li>
+                                    <li><a asp-action="Index" asp-controller="TipoUbicación"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Tipo Ubicaciòn</a></li>
+                                    <li><a asp-action="Index" asp-controller="Ubicación"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Ubicación</a></li>
+                                </ul>
+                            </li>
+                        }                      
                     }
                     <li class="treeview">
                         <a href="#">
@@ -73,10 +80,10 @@
                         </a>
                         <ul class="treeview-menu">
                             <li><a asp-action="Index" asp-controller="Adjudicados"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Adjudicados</a></li>
-                            @if (claimsViewCliente.Succeeded)
-                                {
-                            <li><a asp-action="Index" asp-controller="Clientes"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Clientes</a></li>
-                                }
+                            @if (claimsViewMaestros.Succeeded)
+                            {
+                                <li><a asp-action="Index" asp-controller="Clientes"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Clientes</a></li>
+                            }
                             <li><a asp-action="Index" asp-controller="Inhumados"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Inhumados</a></li>
                         </ul>
                     </li>
