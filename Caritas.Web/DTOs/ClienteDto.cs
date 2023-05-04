@@ -36,6 +36,7 @@ namespace Caritas.Web.DTOs
         [EmailAddress(ErrorMessage = "El campo debe ser un correo electrónico válido")]
         public string Email2 { get; set; }
         public string Celular { get; set; }
+        public string CPagoElectronico { get; set; }
         public string Observaciones { get; set; }
         public EstadoEnum Estado { get; set; } = EstadoEnum.Activo;
 

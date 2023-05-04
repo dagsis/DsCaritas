@@ -49,6 +49,8 @@ namespace Caritas.Insfrastructure.Model
         public string? Celular { get; set; }
 
         [Column(TypeName = "varchar(255)")]
+
+        public string CPagoElectronico { get; set; }
         public string? Observaciones { get; set; }
         public EstadoEnum Estado { get; set; }
         public string FullName => $"{Apellido} {Nombre}";

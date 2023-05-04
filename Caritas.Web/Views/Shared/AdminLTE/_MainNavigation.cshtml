@@ -68,25 +68,27 @@
                                     <li><a asp-action="Index" asp-controller="Ubicación"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Ubicación</a></li>
                                 </ul>
                             </li>
-                        }                      
+                        }
                     }
-                    <li class="treeview">
-                        <a href="#">
-                            <i data-feather="archive"></i>
-                            <span>Maestros</span>
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-right pull-right"></i>
-                            </span>
-                        </a>
-                        <ul class="treeview-menu">
-                            <li><a asp-action="Index" asp-controller="Adjudicados"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Adjudicados</a></li>
-                            @if (claimsViewMaestros.Succeeded)
-                            {
+                    @if (claimsViewMaestros.Succeeded)
+                    {
+                        <li class="treeview">
+                            <a href="#">
+                                <i data-feather="archive"></i>
+                                <span>Maestros</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-right pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu">
+                                <li><a asp-action="Index" asp-controller="Adjudicados"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Adjudicados</a></li>
+
                                 <li><a asp-action="Index" asp-controller="Clientes"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Clientes</a></li>
-                            }
-                            <li><a asp-action="Index" asp-controller="Inhumados"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Inhumados</a></li>
-                        </ul>
-                    </li>
+
+                                <li><a asp-action="Index" asp-controller="Inhumados"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Inhumados</a></li>
+                            </ul>
+                        </li>
+                    }
                     <li class="treeview">
                         <a href="#">
                             <i data-feather="grid"></i>

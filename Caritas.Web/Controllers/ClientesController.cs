@@ -143,68 +143,7 @@ namespace Caritas.Web.Controllers
             });
 
         }
-
-
-        //[Breadcrumb("Companías")]
-        //[Breadcrumb("Nuevo Cliente")]
-        //public ActionResult Create()
-        //{
-
-        //    ViewBag.Title = "Nueva Compania";
-
-        //    CompaniaViewModel model = new CompaniaViewModel()
-        //    {
-        //        FechaAlta = DateTime.Now,
-        //        TipoIvas = ComboHelper.GetComboTipoResponsable(_context),
-        //        Provincias = ComboHelper.GetComboProvincia(_context),
-        //        Direcciones = new List<CompaniaDireccionViewModel>() { new CompaniaDireccionViewModel() {
-        //             IsDeleted = false,
-        //        }},
-        //    };
-
-        //    //  model.Direcciones.Add(new CompaniaDireccionViewModel() { Id = 1 });
-
-        //    return View(model);
-        //}
-
-        //[HttpPost]
-        //public async Task<ActionResult> Create(CompaniaViewModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            model.Direcciones.RemoveAll(n => n.DetDireccion == null);
-
-        //            await _unitOfWork.Companias.Crear(model, _context);
-
-
-
-        //            TempData["SuccessMessage"] = "Registro Agregado Correctamente";
-        //            return RedirectToAction("Index", "Companias");
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            TempData["SuccessMessage"] = e.Message;
-        //            return RedirectToAction("Index", "Companias");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        model = new CompaniaViewModel()
-        //        {
-        //            FechaAlta = DateTime.Now,
-        //            TipoIvas = ComboHelper.GetComboTipoResponsable(_context),
-        //            Provincias = ComboHelper.GetComboProvincia(_context),
-        //            Direcciones = new List<CompaniaDireccionViewModel>() { new CompaniaDireccionViewModel() {
-        //                    IsDeleted = false,
-        //            }},
-        //        };
-        //        return View(model);
-        //    }
-        //}
-
-
+       
         public ActionResult Create()
         {
             ViewBag.Title = "Nuevo Cliente";

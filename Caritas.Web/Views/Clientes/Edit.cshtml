@@ -83,10 +83,15 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-8">
+                                <div class="form-group col-md-6">
                                     <label for="txtEmail">Observaciones</label>
                                     <input type="text" class="form-control" asp-for="Observaciones">
                                     <span asp-validation-for="Observaciones" class="text-danger"></span>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="txtTelefono">C.Pago Electrónico</label>
+                                    <input type="text" class="form-control valid validNumber" asp-for="CPagoElectronico">
+                                    <span asp-validation-for="CPagoElectronico" class="text-danger"></span>
                                 </div>
                                 <div class="form-group col-md-2">
                                     <label for="txtTelefono">P.Electrónico</label>
@@ -96,9 +101,9 @@
                                 <div class="form-group col-md-2">
                                     <label for="txtTelefono">Estado</label>
                                     <select class="form-select" asp-for="Status" required=""
-                                    asp-items="Html.GetEnumSelectList<EstadoEnum>()">
+                                            asp-items="Html.GetEnumSelectList<EstadoEnum>()">
                                     </select>
-                                </div>                             
+                                </div>
                             </div>
                             <div class="tile-footer">
                                 <button id="btnActionForm" class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i><span id="btnText">Actualizar</span></button>&nbsp;&nbsp;&nbsp;
