@@ -30,5 +30,6 @@ namespace DsCommon.ModelsTable
 
         [JsonProperty("clase")]
         public string Clase { get; set; }
+       
     }
 }

@@ -1,11 +1,14 @@
 ﻿@*@using FoxAminLte.Extensions*@
 @using DsCommon.ModelsTable;
 @using Microsoft.CodeAnalysis.CSharp.Scripting
+
 @model DsCommon.ModelsTable.TableUIExt
 
 @{
     Layout = "~/Views/Shared/AdminLTE/_Layout.cshtml";
+  
 }
+
 
 <partial name="AdminLTE/_Notifications">
 
@@ -13,23 +16,27 @@
         <div class="card-header">
             <h3 class="card-title">@ViewData["TableTitle"]</h3>
             <div class="card-tools">
-                @if (Model.IsCreateAllow)
+                @if (Model.IsOnPermisoCreate)
                 {
-                    if (Model.IsOnModalCreate == false)
+                    @if (Model.IsCreateAllow)
                     {
-                        <a class="btn btn-primary" asp-action="Create" asp-controller="@Model.CreateUrl">
-                            <i class="fa fa-plus"></i>
-                            Nuevo
-                        </a>
-                    }
-                    else
-                    {
-                        <button class="btn btn-primary" type="button" data-toggle="ajax-modal" data-url="@Url.Action("Create", @Model.CreateUrl)">
-                            <i class="fa fa-plus"></i>
-                            Nuevo
-                        </button>
+                        if (Model.IsOnModalCreate == false)
+                        {
+                            <a class="btn btn-primary" asp-action="Create" asp-controller="@Model.CreateUrl">
+                                <i class="fa fa-plus"></i>
+                                Nuevo
+                            </a>
+                        }
+                        else
+                        {
+                            <button class="btn btn-primary" type="button" data-toggle="ajax-modal" data-url="@Url.Action("Create", @Model.CreateUrl)">
+                                <i class="fa fa-plus"></i>
+                                Nuevo
+                            </button>
+                        }
                     }
                 }
+
             </div>
         </div>
         <div class="card-body">
@@ -64,10 +71,10 @@
             var divLoading = document.querySelector("#divLoading");
 
             tableDatos = $('#tablaData')
-                .DataTable({                 
-                    "processing": true,                     
+                .DataTable({
+                    "processing": true,
                     "serverSide": @Model.IsServerSide,
-                    "filter" : true,
+                    "filter": true,
                     "ajax": {
                         "url": "@Model.ApiUrl",
                         "type": "@Model.Metodo"
@@ -76,56 +83,59 @@
                         "url": "https://cdn.datatables.net/plug-ins/1.10.19/i18n/Spanish.json"
                     },
                     "columnDefs": [
-            @foreach (FieldUI item in Model.Fields)
-            {
-                @if (item.Tipo == "N")
-                {
-                    @:{ className: '@item.Clase', "targets": @item.ColumnaNumber , "render": $.fn.dataTable.render.number(',', '.', 2, '') },
-                }
-                @if (item.Tipo == "C")
-                {
-                    @:{ className: '@item.Clase', "targets": @item.ColumnaNumber , "render": $.fn.dataTable.render.number(',', '.', 2, '') },
-                }
-                @if (item.Tipo == "S")
-                {
-                    @:{ className: '@item.Clase', "targets": @item.ColumnaNumber },
-                }
-                @if (item.Tipo == "D")
-                {
-                    @:{ className: '@item.Clase', "targets": @item.ColumnaNumber, "render": function (data) { const fecha = new Date(data); return new Intl.DateTimeFormat('fr-FR').format(fecha); } },
-                }
+                            @foreach (FieldUI item in Model.Fields)
+                            {
+                                @if (item.Tipo == "N")
+                                {
+                                    @:{ className: '@item.Clase', "targets": @item.ColumnaNumber , "render": $.fn.dataTable.render.number(',', '.', 2, '') },
+                                }
+                                @if (item.Tipo == "C")
+                                {
+                                    @:{ className: '@item.Clase', "targets": @item.ColumnaNumber , "render": $.fn.dataTable.render.number(',', '.', 2, '') },
+                                }
+                                @if (item.Tipo == "S")
+                                {
+                                    @:{ className: '@item.Clase', "targets": @item.ColumnaNumber },
+                                }
+                                @if (item.Tipo == "D")
+                                {
+                                    @:{ className: '@item.Clase', "targets": @item.ColumnaNumber, "render": function (data) { const fecha = new Date(data); return new Intl.DateTimeFormat('fr-FR').format(fecha); } },
+                                }
 
-            }
-
-                                                                   ],
-                    "columns": [
-            @foreach (FieldUI item in Model.Fields)
-            {
-                @:{ "data": "@item.Data", "name": "@item.Data", "width": "@item.ColumWidth" },
-            }
-                        {
-                            "data": "id",
-                            "render": function (data) {
-                                return `
-                                                                               <div class="text-center">
-            @foreach (var f in Model.Methods)
-            {
-                if (f.IsOnModal == true)
-                {
-                                                                                                                                 <button onclick=fntAbrir("@f.Url/${data}") class="@f.Clase" title ="@f.titulo">
-                                                                                                                                                   <i class="@f.Icono"></i>
-                                                                                                                           </button>
-                }
-                else
-                {
-                                                                                                                                 <a href="@f.Url/${data}" class="@f.Clase" title ="@f.titulo">
-                                                                                                                                <i class="@f.Icono"></i>
-                                                                                                                            </a>
-                }
-            }
-
-                                                                               </div>
-                                                                               `;
+                             }],
+                              "columns": [
+                                            @foreach (FieldUI item in Model.Fields)
+                                            {
+                                                @:{ "data": "@item.Data", "name": "@item.Data", "width": "@item.ColumWidth" },
+                                            }
+                                            {
+                                                "data": "id",
+                                                "render": function (data) {
+                                                 return `
+                                                 <div class="text-center">
+                                            @foreach (var f in Model.Methods)
+                                             {
+                                                 if (f.IsOnModal == true)
+                                                 {
+                                                    if (f.Permiso == true)
+                                                    {
+                                                       <button onclick=fntAbrir("@f.Url/${data}") class="@f.Clase" title ="@f.titulo">
+                                                                <i class="@f.Icono"></i>
+                                                       </button>
+                                                    }                                                  
+                                                 }
+                                                 else
+                                                    {
+                                                     if (f.Permiso == true)
+                                                        {
+                                                         <a href="@f.Url/${data}" class="@f.Clase" title ="@f.titulo">
+                                                            <i class="@f.Icono"></i>
+                                                         </a>
+                                                        }
+                                                    }
+                                              }
+                                        </div>
+                                                       `;
                             }, "width": "@Model.WidthAcciones"
                         }
                     ],
@@ -158,7 +168,7 @@
             {
                 @:[@item.Order, '@item.Direccion'],
             }
-                                                                   ],
+                                                                               ],
                 });
 
             $(document).ready(function () {
@@ -176,7 +186,7 @@
             }
 
 
-            //<partial name="~/Views/Modals/_ModalPermisos.cshtml" />
+                        //<partial name="~/Views/Modals/_ModalPermisos.cshtml" />
 
         </script>
 

@@ -24,5 +24,7 @@ namespace DsCommon.ModelsTable
         [JsonProperty("clase")]
         public string Clase { get; set; } = "btn btn-info btn-sm";
 
+        [JsonProperty("permiso")]
+        public bool Permiso { get; set; } = true;
     }
 }

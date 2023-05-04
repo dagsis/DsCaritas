@@ -9,7 +9,9 @@ using DsCommon.ModelsView;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.NetworkInformation;
 using static System.Net.Mime.MediaTypeNames;
+
 
 namespace Caritas.Web.Controllers
 {
@@ -17,19 +19,31 @@ namespace Caritas.Web.Controllers
     public class ClientesController : Controller
     {
         private readonly IUnitOfWork _unitWork;
+        private readonly IAuthorizationService _authorizationService;
         IMapper _mapper;
 
-        public ClientesController(IUnitOfWork unitWork, IMapper mapper)
+        public ClientesController(IUnitOfWork unitWork, IMapper mapper, IAuthorizationService authorizationService)
         {
             _unitWork = unitWork;
             _mapper = mapper;
+            _authorizationService = authorizationService;
         }
-        public IActionResult Index()
-        {
+        public async Task<IActionResult> Index()
+        { 
+            bool bCreate,bEdit,bDelete = false;
+
+            var claimsCreateMaestros = await _authorizationService.AuthorizeAsync(User, "CreateMaestros");
+            bCreate = claimsCreateMaestros.Succeeded ? true : false;
+            var claimsEditMaestros = await _authorizationService.AuthorizeAsync(User, "EditMaestros");
+            bEdit = claimsEditMaestros.Succeeded ? true : false;
+            var claimsDeleteMaestros = await _authorizationService.AuthorizeAsync(User, "DeleteMaestros");
+            bDelete = claimsDeleteMaestros.Succeeded ? true : false;
+
             var model = new TableUIExt()
             {
                 Metodo="POST",               
                 CreateUrl = "Clientes",
+                IsOnPermisoCreate = bCreate,
                 IsServerSide = "true",
                 IsOnModalCreate = false,
                 WidthAcciones = "15%",
@@ -50,8 +64,8 @@ namespace Caritas.Web.Controllers
                 },
                 Methods = new MethodsUI[] {
                     new MethodsUI() {Icono="fa fa-eye",titulo="Detalles",Url="/Clientes/Detail",Clase="btn btn-info btn-sm" },
-                    new MethodsUI() {Icono="fa fa-pencil",titulo="Editar",Url="/Clientes/Edit",Clase="btn btn-primary btn-sm",IsOnModal=false },
-                    new MethodsUI() {Icono="fa fa-trash",titulo="Borrar",Url="/Clientes/Delete",Clase="btn btn-danger btn-sm" },
+                    new MethodsUI() {Icono="fa fa-pencil",titulo="Editar",Url="/Clientes/Edit",Clase="btn btn-primary btn-sm",IsOnModal=false,Permiso = bEdit },
+                    new MethodsUI() {Icono="fa fa-trash",titulo="Borrar",Url="/Clientes/Delete",Clase="btn btn-danger btn-sm",Permiso = bDelete },
                 }
             };
 
