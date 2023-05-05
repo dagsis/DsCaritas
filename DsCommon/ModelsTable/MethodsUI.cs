@@ -26,5 +26,8 @@ namespace DsCommon.ModelsTable
 
         [JsonProperty("permiso")]
         public bool Permiso { get; set; } = true;
+
+        [JsonProperty("isBtnPermiso")]
+        public bool IsBtnPermiso { get; set; } = false;
     }
 }

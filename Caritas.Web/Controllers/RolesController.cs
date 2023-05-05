@@ -4,12 +4,10 @@ using DsCommon;
 using DsCommon.Enums;
 using DsCommon.IUnitOfWorkPatern;
 using DsCommon.ModelsApi;
-using DsCommon.ModelsTable;
 using DsCommon.ModelsView;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Security.Claims;
 
 namespace Caritas.Web.Controllers
 {
@@ -27,13 +25,14 @@ namespace Caritas.Web.Controllers
         [Breadcrumb("Lista de Roles")]
         [Authorize(Roles = "Usuario")]
         public IActionResult Index()
-        {            
+        {
             ViewBag.titulo = "Listado de Roles";
             ViewData["Title"] = "Roles";
             ViewData["TableTitle"] = "Listado de Roles";
 
             TempData["page_function_js"] = "/js/functions/function_role.js";
             return View();
+
         }
 
         [HttpGet]

@@ -113,27 +113,27 @@
                                                 "render": function (data) {
                                                  return `
                                                  <div class="text-center">
-                                            @foreach (var f in Model.Methods)
-                                             {
-                                                 if (f.IsOnModal == true)
-                                                 {
-                                                    if (f.Permiso == true)
-                                                    {
-                                                       <button onclick=fntAbrir("@f.Url/${data}") class="@f.Clase" title ="@f.titulo">
-                                                                <i class="@f.Icono"></i>
-                                                       </button>
-                                                    }                                                  
-                                                 }
-                                                 else
-                                                    {
-                                                     if (f.Permiso == true)
-                                                        {
-                                                         <a href="@f.Url/${data}" class="@f.Clase" title ="@f.titulo">
-                                                            <i class="@f.Icono"></i>
-                                                         </a>
-                                                        }
-                                                    }
-                                              }
+                                                 @foreach (var f in Model.Methods)
+                                                     {
+                                                            if (f.IsOnModal == true)
+                                                            {
+                                                                if (f.Permiso == true)
+                                                                {
+                                                                    <button onclick=fntAbrir("@f.Url/${data}") class="@f.Clase" title ="@f.titulo">
+                                                                            <i class="@f.Icono"></i>
+                                                                    </button>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                if (f.Permiso == true)
+                                                                {
+                                                                    <a href="@f.Url/${data}" class="@f.Clase" title ="@f.titulo">
+                                                                       <i class="@f.Icono"></i>
+                                                                    </a>
+                                                                }
+                                                            }                                                                                                               
+                                                   }
                                         </div>
                                                        `;
                             }, "width": "@Model.WidthAcciones"

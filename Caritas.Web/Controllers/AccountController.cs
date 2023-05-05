@@ -1,19 +1,16 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using System.Text.Json;
-using System.Text;
-using Caritas.Web.Models;
-using Caritas.Common;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Hosting;
-using System.Text.Encodings.Web;
-using DsCommon.IUnitOfWorkPatern;
-using DsCommon.ModelsView;
+﻿using Caritas.Web.Models;
 using DsCommon;
+using DsCommon.IUnitOfWorkPatern;
 using DsCommon.ModelsApi;
+using DsCommon.ModelsView;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Security.Claims;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 
 namespace Caritas.Web.Controllers
 {

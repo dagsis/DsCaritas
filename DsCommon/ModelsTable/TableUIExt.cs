@@ -52,7 +52,7 @@ namespace DsCommon.ModelsTable
 
         [JsonProperty("isPermisoCreate")]
         public bool IsOnPermisoCreate { get; set; } = true;
-
+      
         public string FieldString
         {
             get

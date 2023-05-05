@@ -1,23 +1,15 @@
-﻿
-using Azure.Core;
-using Caritas.Insfrastructure.Helpers;
-using Caritas.Insfrastructure.Model;
+﻿using Caritas.Insfrastructure.Helpers;
 using Caritas.Web.DTOs;
 using Caritas.Web.Extensions;
 using DsCommon;
 using DsCommon.Enums;
 using DsCommon.IUnitOfWorkPatern;
 using DsCommon.ModelsApi;
-using DsCommon.ModelsTable;
 using DsCommon.ModelsView;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using System.Data;
-using System.Linq.Expressions;
 using System.Security.Claims;
 
 namespace Caritas.Web.Controllers
@@ -36,14 +28,14 @@ namespace Caritas.Web.Controllers
         [Breadcrumb("Usuarios")]
         [Authorize(Roles = "Administrador,Usuario")]
         public IActionResult Index()
-        {          
+        {
             ViewBag.titulo = "Listado de Usuarios";
             ViewData["Title"] = "Usuarios";
             ViewData["TableTitle"] = "Listado de Usuarios";
 
             TempData["page_function_js"] = "/js/functions/function_user.js";
 
-            return View();       
+            return View();
         }
 
         [HttpGet]
