@@ -104,8 +104,6 @@ namespace DsCommon.ModelsTable
                 }
                 return "[" + rtn + "]";
             }
-        }
-
-      
+        }      
     }
 }
