@@ -158,6 +158,7 @@ namespace Caritas.Web.Controllers
 
             var valorPermiso = new ValorRoleviewModel()
             {
+                ApplicationId = Convert.ToInt32(SDRutas.AplicacionId),
                 RoleId = role,
                 Values = valor
             };

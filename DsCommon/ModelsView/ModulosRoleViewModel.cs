@@ -26,6 +26,7 @@ namespace DsCommon.ModelsView
 
     public class ValorRoleviewModel
     {
+        public int ApplicationId { get; set; }
         public string RoleId { get; set; }
         public string Values { get; set; }
     }
