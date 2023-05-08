@@ -34,7 +34,7 @@ namespace DsCommon.Services
             return await this.SendAsync<T>(new ApiRequest()
             {
                 ApiType = SDRutas.ApiType.GET,
-                Url = SDRutas.IdentityApiBase + "/v1/rol/" + id,
+                Url = SDRutas.IdentityApiBase + "/v1/role/getRole/" + id,
                 AccessToken = token
             });
         }

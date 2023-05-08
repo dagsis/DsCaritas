@@ -57,9 +57,7 @@ namespace Caritas.Web.Controllers
                     new FieldUI() { Label = "Apellido y Nombre", Data = "fullName", ColumWidth = "15%" },
                     new FieldUI() { Label = "Domicilio", Data = "domicilio", ColumWidth = "15%" },
                     new FieldUI() { Label = "Localidad", Data = "localidad", ColumWidth = "10%" },
-                    new FieldUI() { Label = "Documento", Data = "documento", ColumWidth = "10%" },
                     new FieldUI() { Label = "Teléfono", Data = "telefono", ColumWidth = "12%" },
-                    new FieldUI() { Label = "P.Elect.", Data = "dest", ColumWidth = "5%" },
                     new FieldUI() { Label = "Estado", Data = "status",ColumWidth = "5%"},
                 },
                 Methods = new MethodsUI[] {

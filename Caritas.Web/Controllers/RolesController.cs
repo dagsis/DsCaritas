@@ -114,7 +114,10 @@ namespace Caritas.Web.Controllers
             var accessToken = HttpContext.User.Claims.First(c => c.Type == "access_token").Value;
             var modulos = await _unitWork.Roles.GetModuleRoleAsync<List<ModulosRoleViewModel>>(accessToken, Convert.ToInt32(SDRutas.AplicacionId), roleId);
 
+            var role = await _unitWork.Roles.GetARolByAsync<RoleDto>( roleId,accessToken);
+
             string sTabla = "";
+            string rolName = role.Name;
 
             if (modulos != null)
             {
@@ -143,7 +146,7 @@ namespace Caritas.Web.Controllers
 
 
 
-            return Ok(sTabla);
+            return Ok(new { titulo = rolName, data = sTabla });
         }
 
         [HttpPost]

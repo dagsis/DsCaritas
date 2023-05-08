@@ -71,9 +71,11 @@ function fntPermisos(url) {
 
     request.onreadystatechange = function () {
         if (request.readyState == 4 && request.status == 200) {
-            document.querySelector('#contentAjax').innerHTML = request.responseText;                  
+            var objData = JSON.parse(request.responseText);
+            document.querySelector('#contentAjax').innerHTML = objData.data;                  
             $('.modalPermisos').modal('show');
-         
+
+           document.getElementById("lblTitulo").innerHTML ="Permisos para el Rol: " + objData.titulo;
            document.querySelector('#formPermisos').addEventListener('submit', fntSavePermisos, false);
         }
     }
