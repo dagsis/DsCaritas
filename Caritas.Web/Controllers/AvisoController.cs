@@ -6,7 +6,10 @@ using DsCommon.ModelsTable;
 using DsCommon.ModelsView;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
+using System.Runtime.InteropServices;
+using System.Text.Encodings.Web;
 
 namespace Caritas.Web.Controllers
 {
@@ -15,13 +18,16 @@ namespace Caritas.Web.Controllers
     {
         private readonly IUnitOfWork _unitWork;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IWebHostEnvironment _hostEnvironment;
+
         IMapper _mapper;
         private int contador = 0;
 
-        public AvisoController(IUnitOfWork unitWork, IAuthorizationService authorizationService, IMapper mapper)
+        public AvisoController(IUnitOfWork unitWork, IAuthorizationService authorizationService, IWebHostEnvironment hostEnvironment, IMapper mapper)
         {
             _unitWork = unitWork;
             _authorizationService = authorizationService;
+            _hostEnvironment = hostEnvironment;
             _mapper = mapper;
         }
 
@@ -150,12 +156,9 @@ namespace Caritas.Web.Controllers
         public async Task<JsonResult> GetTextAsync()
         {
 
-            var queryRegistro = await _unitWork.Repository<Aviso>().GetAsync(null, null, "", true);
-
-            var queryRegis = queryRegistro.Where(e => string.Concat(e.Id).Contains(""));
-
-            queryRegis = queryRegis.OrderBy(c => c.Cliente);
-            return Json(queryRegis);
+            var aviso = await _unitWork.Repository<Aviso>().GetAsync(null, x => x.OrderBy(y => y.Cliente), "", true);
+          
+            return Json(aviso);
         }
 
         [HttpPost]
@@ -163,7 +166,58 @@ namespace Caritas.Web.Controllers
         public async Task<JsonResult> Enviar(int cliente)
         {
             var avisos = await  _unitWork.Repository<Aviso>().GetAsync(x=>x.Cliente == cliente,null,"",true);
-            return Json(avisos.Count - 1);
+
+            var PathToFile = _hostEnvironment.WebRootPath + Path.DirectorySeparatorChar.ToString()
+                      + "templates" + Path.DirectorySeparatorChar.ToString() + "EmailTemplates"
+                      + Path.DirectorySeparatorChar.ToString() + "Aviso.html";
+
+            var subject = $"Aviso de Periodo Vencido - Panteon Ntra Sra de la Merced - {avisos[0].Cliente}";
+
+            string HtmlBody = "";
+            using (StreamReader streamReader = System.IO.File.OpenText(PathToFile))
+            {
+                HtmlBody = streamReader.ReadToEnd();
+            }
+
+            ////{0} : Subject  
+            ////{1} : DateTime  
+            ////{2} : Name  
+            ////{3} : Email  
+            ////{4} : Message  
+            ////{5} : callbackURL  
+
+            string nombre = avisos[0].Nombre + ' ' + avisos[0].Apellido;
+            string tipo = "";
+            string codigo = avisos[0].CPagoElectronico;
+            decimal importe = 0;
+
+            foreach (var item in avisos)
+            {
+                tipo = tipo + (item.Tipo == "N" ? "Nicho " : "Urna ") + item.Nicho + " / " + item.Piso + "° desde " + item.FecDesde.ToString("dd/MM/yyyy") + " hasta " + item.FecHasta.ToString("dd/MM/yyyy") + "<br>";
+                importe = importe + item.Importe;
+            }
+
+            string messageBody = string.Format(HtmlBody,
+                subject,
+                nombre,
+                tipo,
+                importe.ToString("N2"),
+                codigo
+                );
+            EmailViewModel emailViewModel = new EmailViewModel()
+            {
+                Asunto = subject,
+                DisplayName = "Carlos D Agostino",
+                Envia = "carlos@dagsistemas.com.ar",
+                HtmlMessage = messageBody,
+                Usuario = "carlos@dagsistemas.com.ar",
+                Password = "Q722rtg3",
+                Token = ""
+            };
+
+            await _unitWork.Usuarios.EnviarEmail(emailViewModel);
+
+            return Json(new { cantidad = avisos.Count - 1,resultado = "Ok" } );
         }
     }
 }
