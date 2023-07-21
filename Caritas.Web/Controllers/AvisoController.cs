@@ -162,9 +162,8 @@ namespace Caritas.Web.Controllers
         [Authorize(Roles = "Administrador,Usuario")]
         public async Task<JsonResult> Enviar(int cliente)
         {
-
-           
-            return Json(cliente);
+            var avisos = await  _unitWork.Repository<Aviso>().GetAsync(x=>x.Cliente == cliente,null,"",true);
+            return Json(avisos.Count - 1);
         }
     }
 }
