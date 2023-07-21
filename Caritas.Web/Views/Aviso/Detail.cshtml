@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+
+
+<div class="jumbotron">
+    <h1 class="display-4">Hello, world!</h1>
+    <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+    <hr class="my-4">
+    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+    <a class="btn btn-primary btn-lg" id="btnOpen" role="button">Aplicar</a>
+</div>
+
+<br />
+
+<div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" id="lblStatus"></div>
+</div>
+<h3 id="h3"></h3>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnOpen").click(function () {
+
+                var count = 0;
+                var html = '';
+                $(".progress-bar").attr("aria-valuenow", "0");
+                $.ajax({
+                    type: "POST",
+                    url: "/Aviso/GetText",
+                    data: "{}",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    async: false,
+                    success: function (result) {                        
+                        $.each(result, function (key, item) {    
+                            var datos = new FormData();
+                            datos.append("Cliente",item.cliente);
+                            var myVar = setTimeout(updateProgress, 10, ++count, result.length, html);
+                            $.ajax({
+                                type: "POST",
+                                url: "/Aviso/Enviar",
+                                data: datos,
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                //contentType: "application/json; charset=utf-8",
+                                //dataType: "json",
+                                async: false,
+                                success: function (result) {
+                                   console.log(result);
+                                },
+                                error: function (errormessage) {
+                                    $("#h3").text(errormessage.responseText);
+                                    return false;
+                                }
+                            });
+                        });
+                    },
+                    error: function (errormessage) {
+                        $("#h3").text(errormessage.responseText);
+                        return false;
+                    }
+                });
+                var count = 1;
+
+                function updateProgress(count, max, html) {
+                    $("#h3").text(count + " Registros cargados con éxito");
+                    if (count <= max) {
+                        count1 = parseInt(count / (max / 100));
+                        var lblStatus = document.getElementById("lblStatus");
+                        lblStatus.style.width = count1 + "%";
+                        $("#lblStatus").text(count1 + '% Completado');
+                    }
+                }
+            });         
+        });
+    </script>
+}

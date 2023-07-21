@@ -1,5 +1,6 @@
 ﻿using Caritas.Common.Models;
 using Caritas.Insfrastructure.Model;
+using Caritas.Insfrastructure.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,9 @@ namespace Caritas.Insfrastructure.Data
         public DbSet<Inhumado> Inhumados { get; set; }
         public DbSet<TipoUbicacion> TipoUbicacions { get; set; }
         public DbSet<Ubicacion> Ubicacions { get; set; }
-       
+        public DbSet<Calendario>  Calendario { get; set; }
+        public DbSet<PlantillaEmail> PlantillasEmail { get; set; }
+        public DbSet<Aviso> Avisos { get; set; }
+
     }
 }

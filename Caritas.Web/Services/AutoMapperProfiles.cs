@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Caritas.Insfrastructure.Model;
+using Caritas.Insfrastructure.Models;
 using Caritas.Web.DTOs;
 
 namespace Caritas.Web.Services
@@ -10,6 +11,12 @@ namespace Caritas.Web.Services
         {
             CreateMap<Cliente, ClienteDto>();
             CreateMap<ClienteDto, Cliente>();
+
+            CreateMap<Calendario, CalendarioDto>();
+            CreateMap<CalendarioDto, Calendario>();
+
+            CreateMap<PlantillaEmail, PlantillaEmailDto>();
+            CreateMap<PlantillaEmailDto, PlantillaEmail>();
         }
     }
 }
