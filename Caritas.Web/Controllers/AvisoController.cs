@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Caritas.Insfrastructure.Models;
 using Caritas.Web.DTOs;
+using Caritas.Web.Services;
 using DsCommon.IUnitOfWorkPatern;
 using DsCommon.ModelsTable;
 using DsCommon.ModelsView;
@@ -19,16 +20,22 @@ namespace Caritas.Web.Controllers
         private readonly IUnitOfWork _unitWork;
         private readonly IAuthorizationService _authorizationService;
         private readonly IWebHostEnvironment _hostEnvironment;
+        private readonly IServiceManagement _serviceManagement;
 
         IMapper _mapper;
         private int contador = 0;
 
-        public AvisoController(IUnitOfWork unitWork, IAuthorizationService authorizationService, IWebHostEnvironment hostEnvironment, IMapper mapper)
+        public AvisoController(IUnitOfWork unitWork, 
+               IAuthorizationService authorizationService, 
+               IWebHostEnvironment hostEnvironment, 
+               IMapper mapper,
+               IServiceManagement serviceManagement)
         {
             _unitWork = unitWork;
             _authorizationService = authorizationService;
             _hostEnvironment = hostEnvironment;
             _mapper = mapper;
+            _serviceManagement = serviceManagement;
         }
 
         public IActionResult Index()
@@ -204,18 +211,22 @@ namespace Caritas.Web.Controllers
                 importe.ToString("N2"),
                 codigo
                 );
-            EmailViewModel emailViewModel = new EmailViewModel()
-            {
-                Asunto = subject,
-                DisplayName = "Carlos D Agostino",
-                Envia = "carlos@dagsistemas.com.ar",
-                HtmlMessage = messageBody,
-                Usuario = "carlos@dagsistemas.com.ar",
-                Password = "Q722rtg3",
-                Token = ""
-            };
 
-            await _unitWork.Usuarios.EnviarEmail(emailViewModel);
+            //EmailViewModel emailViewModel = new EmailViewModel()
+            //{
+            //    Asunto = subject,
+            //    DisplayName = "Carlos D Agostino",
+            //    Envia = "carlos@dagsistemas.com.ar",
+            //    HtmlMessage = messageBody,
+            //    Usuario = "carlos@dagsistemas.com.ar",
+            //    Password = "Q722rtg3",
+            //    Token = ""
+            //};
+
+            //await _unitWork.Usuarios.EnviarEmail(emailViewModel);
+
+            var enviar = await _serviceManagement.PostMail("carlos@dagsistemas.com.ar",nombre,subject,messageBody);
+
 
             return Json(new { cantidad = avisos.Count - 1,resultado = "Ok" } );
         }

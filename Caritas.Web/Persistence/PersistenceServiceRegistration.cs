@@ -1,4 +1,5 @@
 ﻿using Caritas.Insfrastructure.Data;
+using Caritas.Web.Services;
 using DsCommon;
 using DsCommon.IUnitOfWorkPatern;
 using DsCommon.Services;
@@ -14,6 +15,7 @@ namespace Caritas.Web.Persistence
 
             services.AddHttpClient();
             services.AddHttpContextAccessor();
+
 
             var cnnString = configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -31,6 +33,9 @@ namespace Caritas.Web.Persistence
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IBaseService, BaseService>();
+
+            services.AddTransient<IServiceManagement, ServiceManagement>();
+
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                      .AddCookie();
