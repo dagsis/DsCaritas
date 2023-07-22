@@ -27,8 +27,8 @@
             var html = '';
             $(".progress-bar").attr("aria-valuenow", "0");
             $(".progress-bar").css('width', 0 + '%');
-            $("#btnOpen").prop("disabled", true);   
-            
+            $("#btnOpen").prop("disabled", true);
+
             $.ajax({
                 type: "POST",
                 url: "/Aviso/GetText",
@@ -71,7 +71,8 @@
                     $("#h3").text(errormessage.responseText);
                     return false;
                 }
-          
+            });
+
         });
 
         var count = 1;
@@ -87,6 +88,6 @@
                 $("#lblStatus").text(count1 + '% Completado');
             }
         }
-                             //   });
+
     </script>
 }
