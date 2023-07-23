@@ -25,6 +25,7 @@
             var count = 0;
             var ncliente = 0;
             var html = '';
+
             $(".progress-bar").attr("aria-valuenow", "0");
             $(".progress-bar").css('width', 0 + '%');
             $("#btnOpen").prop("disabled", true);
@@ -78,7 +79,6 @@
         var count = 1;
 
         function updateProgress(count, max, html) {
-            //    debugger;
             $("#h3").text(count + " Registros procesados con éxito");
             if (count <= max) {
                 count1 = parseInt(count / (max / 100));

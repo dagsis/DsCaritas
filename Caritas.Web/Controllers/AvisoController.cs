@@ -178,6 +178,7 @@ namespace Caritas.Web.Controllers
                       + "templates" + Path.DirectorySeparatorChar.ToString() + "EmailTemplates"
                       + Path.DirectorySeparatorChar.ToString() + "Aviso.html";
 
+           
             var subject = $"Aviso de Periodo Vencido - Panteon Ntra Sra de la Merced - {avisos[0].Cliente}";
 
             string HtmlBody = "";
@@ -211,22 +212,8 @@ namespace Caritas.Web.Controllers
                 importe.ToString("N2"),
                 codigo
                 );
-
-            //EmailViewModel emailViewModel = new EmailViewModel()
-            //{
-            //    Asunto = subject,
-            //    DisplayName = "Carlos D Agostino",
-            //    Envia = "carlos@dagsistemas.com.ar",
-            //    HtmlMessage = messageBody,
-            //    Usuario = "carlos@dagsistemas.com.ar",
-            //    Password = "Q722rtg3",
-            //    Token = ""
-            //};
-
-            //await _unitWork.Usuarios.EnviarEmail(emailViewModel);
-
+         
             var enviar = await _serviceManagement.PostMail("carlos@dagsistemas.com.ar",nombre,subject,messageBody);
-
 
             return Json(new { cantidad = avisos.Count - 1,resultado = "Ok" } );
         }
