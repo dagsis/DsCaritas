@@ -65,7 +65,6 @@ namespace Caritas.Web.Services
                 using (var multipartFormContent = new MultipartFormDataContent())
                 {
                     //Add other fields
-                    //     multipartFormContent.Add(new StringContent(null), name: "Servidor");
                     multipartFormContent.Add(new StringContent(nombre), name: "DisplayName");
                     multipartFormContent.Add(new StringContent(envia), name: "Envia");
                     multipartFormContent.Add(new StringContent("no-responder@dagsis.com.ar"), name: "Usuario");
