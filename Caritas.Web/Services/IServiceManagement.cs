@@ -2,6 +2,6 @@
 {
     public interface IServiceManagement
     {
-        Task<string> PostMail(string envia, string nombre,string asunto,string sHtml);
+        Task<string> PostMail(string envia,int cliente ,string nombre,string asunto,string sHtml);
     }
 }

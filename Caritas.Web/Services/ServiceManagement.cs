@@ -21,7 +21,7 @@ namespace Caritas.Web.Services
             _httpClientFactory = clientFactory;
             _hostEnvironment = hostEnvironment;
         }
-        public async Task<string> PostMail(string envia, string nombre, string asunto, string sHtml)
+        public async Task<string> PostMail(string envia,int cliente ,string nombre, string asunto, string sHtml)
         {
             string body = sHtml;
 
@@ -31,37 +31,44 @@ namespace Caritas.Web.Services
                     + "templates" + Path.DirectorySeparatorChar.ToString() + "EmailTemplates"
                     + Path.DirectorySeparatorChar.ToString() + "Dorso del Aviso.pdf";
 
-            //viewModel.Usuario = "no-responder@dagsis.com.ar"; //"sistemaspanteon@caritasbsas.org.ar";
-            //viewModel.Password = "Perg0022."; //"$ClavePanteon23";
+            var PathToFilePdf = _hostEnvironment.WebRootPath + Path.DirectorySeparatorChar.ToString()
+                  + "templates" + Path.DirectorySeparatorChar.ToString() + "PdfAvisos"
+                  + Path.DirectorySeparatorChar.ToString() + cliente + ".pdf";
 
-            ////    viewModel.Usuario = "sistemaspanteon@caritasbsas.org.ar";
-            ////    viewModel.Password = "$ClavePanteon23";
-            //viewModel.Envia = envia;
-            //viewModel.Asunto = asunto;
-            //viewModel.HtmlMessage = body;
-            //viewModel.DisplayName = nombre;
 
-            //HttpResponseMessage? apiResponse = null;
+            //   viewModel.Usuario = "no-responder@dagsis.com.ar";//"sistemaspanteon@caritasbsas.org.ar";
+            //   viewModel.Password = "Perg0022."; //"$ClavePanteon23";
 
-            //HttpClient client = _httpClientFactory.CreateClient("MangoAPI");
-            //HttpRequestMessage message = new();
+            //   //viewModel.Usuario = "sistemaspanteon@caritasbsas.org.ar";
+            //   //viewModel.Password = "$ClavePanteon23";
+            //   viewModel.Envia = envia;
+            //   viewModel.Asunto = asunto;
+            //   viewModel.HtmlMessage = body;
+            //   viewModel.DisplayName = nombre;
 
-            //message.Headers.Add("Accept", "application/json");
-            //message.RequestUri = new Uri("http://localhost:5172/v1/emailSender/emailSenderAplica");
+            //   HttpResponseMessage? apiResponse = null;
 
-            ////      message.RequestUri = new Uri("http://dagsist.net.ar/v1/emailSender/emailSenderGestion");
+            //   HttpClient client = _httpClientFactory.CreateClient("MangoAPI");
+            //   HttpRequestMessage message = new();
 
-            //message.Content = new StringContent(JsonConvert.SerializeObject(viewModel), Encoding.UTF8, "application/json");
+            //   message.Headers.Add("Accept", "application/json");
+            ////   message.RequestUri = new Uri("http://localhost:5172/v1/emailSender/emailSenderGestion");
 
-            //message.Method = HttpMethod.Post;
-            //apiResponse = await client.SendAsync(message);
+            //    message.RequestUri = new Uri("http://dagsist.net.ar/v1/emailSender/emailSenderGestion");
 
-            //var apiContent = await apiResponse.Content.ReadAsStringAsync();
+            //   message.Content = new StringContent(JsonConvert.SerializeObject(viewModel), Encoding.UTF8, "application/json");
 
-            //return "Ok";
+            //   message.Method = HttpMethod.Post;
+            //   apiResponse = await client.SendAsync(message);
+
+            //   var apiContent = await apiResponse.Content.ReadAsStringAsync();
+
+            //   return "Ok";
 
             using (var client = new HttpClient())
             {
+
+
                 using (var multipartFormContent = new MultipartFormDataContent())
                 {
                     //Add other fields
@@ -72,13 +79,23 @@ namespace Caritas.Web.Services
                     multipartFormContent.Add(new StringContent(asunto), name: "Asunto");
                     multipartFormContent.Add(new StringContent(body), name: "HtmlMessage");
 
-                   // Add the file
+                    // Add the file
                     var fileStreamContent = new StreamContent(File.OpenRead(PathToFileDorso));
                     fileStreamContent.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
                     multipartFormContent.Add(fileStreamContent, name: "uploadfile", fileName: "Dorso del Aviso.pdf");
 
+                    if (File.Exists(PathToFilePdf))
+                    {
+                        var fileStreamContent1 = new StreamContent(File.OpenRead(PathToFilePdf));
+                        fileStreamContent1.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
+                        multipartFormContent.Add(fileStreamContent1, name: "uploadfile", fileName: cliente + ".pdf");
+                    }
+
+
                     //Send it
-                    var response = await client.PostAsync("http://localhost:5172/v1/emailSender/emailSenderAplica", multipartFormContent);
+                    var response = await client.PostAsync("http://dagsist.net.ar/v1/emailSender/emailSenderAplica", multipartFormContent);
+                  //  var response = await client.PostAsync("http://localhost:5172/v1/emailSender/emailSenderAplica", multipartFormContent);
+
                     response.EnsureSuccessStatusCode();
                     return await response.Content.ReadAsStringAsync();
                 }

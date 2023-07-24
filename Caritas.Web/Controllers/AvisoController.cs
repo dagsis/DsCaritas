@@ -1,16 +1,16 @@
 ﻿using AutoMapper;
+using Caritas.Insfrastructure.Model;
 using Caritas.Insfrastructure.Models;
 using Caritas.Web.DTOs;
 using Caritas.Web.Services;
 using DsCommon.IUnitOfWorkPatern;
 using DsCommon.ModelsTable;
-using DsCommon.ModelsView;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
-using System.Runtime.InteropServices;
-using System.Text.Encodings.Web;
+using NuGet.Protocol.Plugins;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace Caritas.Web.Controllers
 {
@@ -25,9 +25,9 @@ namespace Caritas.Web.Controllers
         IMapper _mapper;
         private int contador = 0;
 
-        public AvisoController(IUnitOfWork unitWork, 
-               IAuthorizationService authorizationService, 
-               IWebHostEnvironment hostEnvironment, 
+        public AvisoController(IUnitOfWork unitWork,
+               IAuthorizationService authorizationService,
+               IWebHostEnvironment hostEnvironment,
                IMapper mapper,
                IServiceManagement serviceManagement)
         {
@@ -151,20 +151,32 @@ namespace Caritas.Web.Controllers
 
             PlantillaEmailDto avisos = _mapper.Map<PlantillaEmailDto>(allObj);
 
-
             ViewBag.Title = "Plantilla Email";
 
 
             return View(avisos);
         }
 
-       
+
         [HttpPost]
-        public async Task<JsonResult> GetTextAsync()
+        public async Task<JsonResult> GetText()
         {
+            List<Aviso> listaFiltrada = new List<Aviso>();
 
             var aviso = await _unitWork.Repository<Aviso>().GetAsync(null, x => x.OrderBy(y => y.Cliente), "", true);
-          
+
+            int cliente = 0;
+            foreach (var item in aviso)
+            { 
+             
+                while (item.Cliente != cliente)
+                {
+                    cliente = item.Cliente;
+                    var avisos = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == item.Cliente, null, "", true);                  
+                    var dataPdf = await DescargarPdf(avisos);
+                }
+
+            }
             return Json(aviso);
         }
 
@@ -172,13 +184,13 @@ namespace Caritas.Web.Controllers
         [Authorize(Roles = "Administrador,Usuario")]
         public async Task<JsonResult> Enviar(int cliente)
         {
-            var avisos = await  _unitWork.Repository<Aviso>().GetAsync(x=>x.Cliente == cliente,null,"",true);
+            var avisos = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == cliente, null, "", true);
 
             var PathToFile = _hostEnvironment.WebRootPath + Path.DirectorySeparatorChar.ToString()
                       + "templates" + Path.DirectorySeparatorChar.ToString() + "EmailTemplates"
                       + Path.DirectorySeparatorChar.ToString() + "Aviso.html";
 
-           
+
             var subject = $"Aviso de Periodo Vencido - Panteon Ntra Sra de la Merced - {avisos[0].Cliente}";
 
             string HtmlBody = "";
@@ -212,10 +224,123 @@ namespace Caritas.Web.Controllers
                 importe.ToString("N2"),
                 codigo
                 );
-         
-            var enviar = await _serviceManagement.PostMail("carlos@dagsistemas.com.ar",nombre,subject,messageBody);
 
-            return Json(new { cantidad = avisos.Count - 1,resultado = "Ok" } );
+
+            var enviar = await _serviceManagement.PostMail("carlos@dagsistemas.com.ar", cliente, nombre, subject, messageBody);
+            return Json(new { cantidad = avisos.Count - 1, resultado = "Ok" });
+        }
+
+        //private async Task<IActionResult> DescargarPdf(IReadOnlyList<Aviso> model)
+
+        [HttpPost]
+        [Authorize(Roles = "Administrador,Usuario")]
+        public async Task<IActionResult> DescargarPdf(IReadOnlyList<Aviso> model)
+        {      
+            var cliente = await _unitWork.Repository<Cliente>().GetByIdAsync(model[0].Cliente);
+            if (cliente != null)
+            {
+                var rutaImagen1 = Path.Combine(_hostEnvironment.WebRootPath, "assets/logoAviso1.png");
+                var rutaFoster = Path.Combine(_hostEnvironment.WebRootPath, "assets/fosterAviso.png");
+
+                byte[] imageData1 = System.IO.File.ReadAllBytes(rutaImagen1);
+                byte[] imageData3 = System.IO.File.ReadAllBytes(rutaFoster);
+
+                //  QuestPDF.Settings.License = LicenseType.Community;
+
+                var data = Document.Create(document =>
+                {
+                    document.Page(page =>
+                    {
+                        page.Margin(10);
+                        // page content
+                        page.Header().Row(row =>
+                        {
+
+
+                            //  row.ConstantItem(380).Height(100).Placeholder();
+                            row.ConstantItem(380).Image(imageData1);
+                            row.RelativeItem().Height(100).Column(col =>
+                            {
+                                col.Item().AlignRight().PaddingBottom(10).PaddingRight(10).Text("CONTIENE VENCIMIENTO").FontSize(11).SemiBold();
+                                col.Item().AlignRight().PaddingRight(10).Text(model[0].Cliente + " - " + model[0].Nombre + ' ' + model[0].Apellido).FontSize(7);
+                                col.Item().AlignRight().PaddingRight(10).Text(cliente.Domicilio + " - " + cliente.CodigoPostal + " - " + cliente.Localidad).FontSize(7);
+                                col.Item().AlignRight().PaddingRight(10).PaddingTop(5).Text("Buenos Aires, " + DateTime.Today.ToLongDateString()).FontSize(7);
+                            });
+                        });
+
+                        page.Content().Row(row =>
+                        {
+                            row.RelativeItem().PaddingTop(20).PaddingLeft(40).PaddingRight(40).Column(col =>
+                            {
+                                col.Item().AlignCenter().PaddingBottom(3).Text("INFORME DE VENCIMIENTOS").SemiBold();
+                                col.Item().Table(table =>
+                                {
+                                    table.ColumnsDefinition(col =>
+                                    {
+                                        col.RelativeColumn(5);
+                                        col.RelativeColumn();
+                                    });
+                                    table.Header(header =>
+                                    {
+                                        header.Cell().Border(1).AlignCenter().Padding(2).Text("C o n c e p t o").SemiBold();
+                                        header.Cell().Border(1).AlignCenter().Padding(2).Text("Importe").SemiBold();
+                                    });
+
+                                    decimal total = 0;
+                                    string tipo = "";
+                                    foreach (var item in model)
+                                    {
+                                        var precio = item.Importe;
+                                        total += precio;
+
+                                        tipo = (item.Tipo == "N" ? "Nicho " : "Urna ") + item.Nicho + " / " + item.Piso + "° desde " + item.FecDesde.ToString("dd/MM/yyyy") + " hasta " + item.FecHasta.ToString("dd/MM/yyyy");
+
+                                        table.Cell().BorderLeft(1).BorderRight(1).PaddingLeft(5).Text(tipo).FontSize(10);
+                                        table.Cell().BorderLeft(1).BorderRight(1).AlignRight().PaddingRight(5).Text(precio.ToString("N2")).FontSize(10);
+
+                                    }
+                                    table.Footer(foster =>
+                                    {
+                                        foster.Cell().Border(1).AlignCenter().Padding(2).Text("Fecha de vencimiento: 10 de septiembre de 2023").SemiBold();
+                                        foster.Cell().Border(1).AlignRight().PaddingTop(2).PaddingRight(5).Text(total.ToString("N2")).SemiBold();
+                                    });
+
+                                    col.Item().Text("").FontSize(3);
+
+                                    col.Item().Background(Colors.Grey.Lighten3).Padding(5)
+                                    .Column(col =>
+                                    {
+                                        col.Item().AlignCenter().Text("Si detecta que algunos de los períodos reclamados ya fue abonado por favor envie un e-mail a cobranzaspanteon@caritas.org.ar");
+                                    });
+                                });
+                            });
+                        });
+
+                        page.Footer().Row(row =>
+                        {
+                            row.RelativeItem().Height(100).Image(imageData3);
+                        });
+                    });
+                }).GeneratePdf();
+
+                //Stream stream = new MemoryStream(data);
+                //return File(stream, "application/pdf", "Aviso.pdf");
+
+                var PathToFilePdf = _hostEnvironment.WebRootPath + Path.DirectorySeparatorChar.ToString()
+                      + "templates" + Path.DirectorySeparatorChar.ToString() + "PdfAvisos"
+                      + Path.DirectorySeparatorChar.ToString() + model[0].Cliente + ".pdf";
+
+
+                using (MemoryStream memoryStream = new MemoryStream(data))
+                {
+                    using Stream streamToWriteTo = System.IO.File.Open(PathToFilePdf, FileMode.Create);
+
+                    memoryStream.Position = 0;
+                    await memoryStream.CopyToAsync(streamToWriteTo);
+                }              
+            }
+
+            return Ok();
         }
     }
 }
