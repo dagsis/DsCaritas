@@ -79,6 +79,7 @@
         var count = 1;
 
         function updateProgress(count, max, html) {
+            idleTime = 0;
             $("#h3").text(count + " Registros procesados con éxito");
             if (count <= max) {
                 count1 = parseInt(count / (max / 100));
