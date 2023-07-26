@@ -165,18 +165,18 @@ namespace Caritas.Web.Controllers
 
             var aviso = await _unitWork.Repository<Aviso>().GetAsync(null, x => x.OrderBy(y => y.Cliente), "", true);
 
-            int cliente = 0;
-            foreach (var item in aviso)
-            { 
+            //int cliente = 0;
+            //foreach (var item in aviso)
+            //{ 
              
-                while (item.Cliente != cliente)
-                {
-                    cliente = item.Cliente;
-                    var avisos = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == item.Cliente, null, "", true);                  
-                    var dataPdf = await DescargarPdf(avisos);
-                }
+            //    while (item.Cliente != cliente)
+            //    {
+            //        cliente = item.Cliente;
+            //        var avisos = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == item.Cliente, null, "", true);                  
+            //        var dataPdf = await DescargarPdf(avisos);
+            //    }
 
-            }
+            //}
             return Json(aviso);
         }
 
@@ -301,7 +301,7 @@ namespace Caritas.Web.Controllers
                                     }
                                     table.Footer(foster =>
                                     {
-                                        foster.Cell().Border(1).AlignCenter().Padding(2).Text("Fecha de vencimiento: 10 de septiembre de 2023").SemiBold();
+                                        foster.Cell().Border(1).AlignCenter().Padding(2).Text("Fecha de vencimiento: 24 de Julio de 2023").SemiBold();
                                         foster.Cell().Border(1).AlignRight().PaddingTop(2).PaddingRight(5).Text(total.ToString("N2")).SemiBold();
                                     });                                  
                                 });
