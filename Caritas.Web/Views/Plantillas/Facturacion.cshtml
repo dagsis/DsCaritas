@@ -1,0 +1,122 @@
+﻿@model Caritas.Web.DTOs.CalendarioDto
+
+<div class="jumbotron">
+    <h1 id="h1" class="display-4">@ViewBag.Title</h1>
+    <p class="lead">Parametros Generales</p>
+    <hr class="my-4">
+
+    <input type="hidden" asp-for="Id">
+
+    <div class="row">
+        <div class="form-group col-md-2">
+            <label for="txtNombre">Vencimiento</label>
+            <input type="date" class="form-control valid validText" asp-for="Vencimiento">
+            <span asp-validation-for="Vencimiento" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-2">
+            <label for="txtNombre">Próximo Vencimiento</label>
+            <input type="date" class="form-control valid validText" asp-for="VencimientoProc">
+            <span asp-validation-for="VencimientoProc" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-2">
+            <label for="txtNombre">A Partir de </label>
+            <input type="date" class="form-control valid validText" asp-for="FechaAPartir">
+            <span asp-validation-for="FechaAPartir" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group col-md-12">
+        <label for="txtEmail">Observación E-Mail</label>
+        <textarea class="form-control" id="content" asp-for="Observacion"></textarea>
+    </div>
+</div>
+  
+    <button class="btn btn-primary btn-lg" id="btnOpen" role="button">Aplicar</button>
+
+<br />
+
+<div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="" aria-valuemin="0" aria-valuemax="100" id="lblStatus"></div>
+</div>
+<h3 id="h3"></h3>
+
+@section Scripts {
+    <script type="text/javascript">
+        $("#btnOpen").click(function () {
+            var count = 0;
+            var ncliente = 0;
+            var html = '';
+
+            $(".progress-bar").attr("aria-valuenow", "0");
+            $(".progress-bar").css('width', 0 + '%');
+            $("#btnOpen").prop("disabled", true);
+
+            var model =
+            {
+                id : "@Model.Id",
+                vencimiento : "@Model.Vencimiento",
+                VencimientoProc : "@Model.VencimientoProc",
+                FechaAPartir : "@Model.FechaAPartir",
+                Observacion : "@Model.Observacion"
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/Plantillas/GetFacturacion",
+                contetnType: "application/x-www-form-urlencoded",
+                data: model,
+                dataType: "json",
+                async: true,
+                success: function (result) {
+                    var total = result.length;
+                    $.each(result, function (key, item) {
+
+                        var datos = new FormData();
+                        datos.append("Cliente", item.cliente);
+                        while (ncliente != item.cliente) {
+                            ncliente = item.cliente;
+                            $.ajax({
+                                type: "POST",
+                                url: "/Plantillas/EnviarFactura",
+                                data: datos,
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                async: true,
+                                success: function (result) {
+                                    count = (count + 1) + result.cantidad;
+                                    var myVar = setTimeout(updateProgress, 10, count, total, html);
+                                },
+                                error: function (errormessage) {
+                                    $("#h3").text(errormessage.responseText);
+                                    return false;
+                                }
+                            });
+                        }
+
+                    });
+                },
+                error: function (errormessage) {
+                    $("#h3").text(errormessage.responseText);
+                    return false;
+                }
+            });
+
+        });
+
+        var count = 1;
+
+        function updateProgress(count, max, html) {
+            idleTime = 0;
+            $("#h3").text(count + " Registros procesados con éxito");
+            if (count <= max) {
+                count1 = parseInt(count / (max / 100));
+                $(".progress-bar").css('width', count1 + '%');
+                var lblStatus = document.getElementById("lblStatus");
+                lblStatus.style.width = count1 + "%";
+                $("#lblStatus").text(count1 + '% Completado');
+            }
+        }
+
+    </script>
+}

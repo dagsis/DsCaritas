@@ -24,6 +24,10 @@ namespace Caritas.Insfrastructure.Models
         public DateTime FecDesde { get; set; }
         public DateTime FecHasta { get; set; }
         public decimal Importe { get; set; }
-
+        public string Domicilio { get; set; }
+        public string Valor_Vencido { get; set; }
+        public string Valor_a_Vencer { get; set; }
+        public string SiguienteValor_Vencido { get; set; }
+        public string SiguienteValor_a_Vencer { get; set; }
     }
 }

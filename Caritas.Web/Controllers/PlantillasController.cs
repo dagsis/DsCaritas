@@ -2,6 +2,7 @@
 using Caritas.Insfrastructure.Model;
 using Caritas.Insfrastructure.Models;
 using Caritas.Web.DTOs;
+using Caritas.Web.Extensions;
 using Caritas.Web.Services;
 using DsCommon.IUnitOfWorkPatern;
 using DsCommon.ModelsTable;
@@ -15,7 +16,7 @@ using QuestPDF.Infrastructure;
 namespace Caritas.Web.Controllers
 {
     [Authorize(Roles = "Administrador,Usuario,Empleado")]
-    public class AvisoController : Controller
+    public class PlantillasController : Controller
     {
         private readonly IUnitOfWork _unitWork;
         private readonly IAuthorizationService _authorizationService;
@@ -25,7 +26,7 @@ namespace Caritas.Web.Controllers
         IMapper _mapper;
         private int contador = 0;
 
-        public AvisoController(IUnitOfWork unitWork,
+        public PlantillasController(IUnitOfWork unitWork,
                IAuthorizationService authorizationService,
                IWebHostEnvironment hostEnvironment,
                IMapper mapper,
@@ -47,7 +48,7 @@ namespace Caritas.Web.Controllers
             var model = new TableUIExt()
             {
                 Metodo = "POST",
-                CreateUrl = "Aviso",
+                CreateUrl = "Plantillas",
                 IsOnPermisoCreate = bCreate,
                 IsServerSide = "true",
                 IsOnModalCreate = false,
@@ -56,21 +57,21 @@ namespace Caritas.Web.Controllers
                     new OrderUI() { Order = 1 },
                 },
                 Dom = "Bfrtip",
-                ApiUrl = "/Aviso/GetAll",
+                ApiUrl = "/Plantillas/GetAll",
                 Fields = new FieldUI[] {
                     new FieldUI() { Label = "Id", Data = "id", ColumWidth = "5%" },
                     new FieldUI() { Label = "Descripción", Data = "descripcion", ColumWidth = "35%" },
                     new FieldUI() { Label = "Plantilla", Data = "plantilla", ColumWidth = "35%" },
                 },
                 Methods = new MethodsUI[] {
-                    new MethodsUI() {Icono="fa fa-eye",titulo="Enviar Emails",Url="/Aviso/Detail",Clase="btn btn-info btn-sm",IsOnModal=false },
-                    new MethodsUI() {Icono="fa fa-pencil",titulo="Editar",Url="/Aviso/Edit",Clase="btn btn-primary btn-sm",IsOnModal=false,Permiso = bEdit },
-                    new MethodsUI() {Icono="fa fa-trash",titulo="Borrar",Url="/Aviso/Delete",Clase="btn btn-danger btn-sm",Permiso = bDelete },
+                    new MethodsUI() {Icono="fa fa-eye",titulo="Procesar",Url="/Plantillas/Detail",Clase="btn btn-info btn-sm",IsOnModal=false },
+                    //new MethodsUI() {Icono="fa fa-pencil",titulo="Parametros",Url="/Plantillas/Edit",Clase="btn btn-primary btn-sm",IsOnModal=false,Permiso = bEdit },
+                    //new MethodsUI() {Icono="fa fa-trash",titulo="Borrar",Url="/Plantillas/Delete",Clase="btn btn-danger btn-sm",Permiso = bDelete },
                 }
             };
 
             ViewBag.titulo = "Listado de Plantillas";
-            ViewData["Title"] = "Avisos";
+            ViewData["Title"] = "Plantillas";
             ViewData["TableTitle"] = "Listado de Plantillas para Emails";
 
             return View("~/Views/Shared/_TableViewExt.cshtml", model);
@@ -146,15 +147,83 @@ namespace Caritas.Web.Controllers
         [Authorize(Roles = "Administrador,Usuario")]
         public async Task<IActionResult> Detail(int id)
         {
+            CalendarioDto calendario;
 
-            var allObj = await _unitWork.Repository<PlantillaEmail>().GetByIdAsync(id);
+            var allObj = new object();
+            string vista = "";
+            switch (id)
+            {
+                case 1:
+                    allObj = await _unitWork.Repository<Calendario>().GetByIdAsync(id);
+                    ViewBag.Title = "Plantilla Email";
+                    vista = "Detail";
+                    calendario = _mapper.Map<CalendarioDto>(allObj);
+                    break;
+                case 2:
+                    allObj = await _unitWork.Repository<Calendario>().GetByIdAsync(id);
+                    ViewBag.Title = "Facturación";
+                    vista = "Facturacion";
+                    calendario = _mapper.Map<CalendarioDto>(allObj);
+                    break;
+                default:
+                    calendario = _mapper.Map<CalendarioDto>(allObj);
+                    break;
+            }
 
+            return View(vista,calendario);
+        }
+
+
+
+        [HttpGet]
+        [Breadcrumb("Plantilas")]
+        [Breadcrumb("Parametros")]
+        public async Task<IActionResult> Edit(int id)
+        {
+
+            var allObj = new object();
             PlantillaEmailDto avisos = _mapper.Map<PlantillaEmailDto>(allObj);
 
-            ViewBag.Title = "Plantilla Email";
+            string vista = "";
+            switch (id)
+            {
+                case 1:
+                    allObj = await _unitWork.Repository<PlantillaEmail>().GetByIdAsync(id);
+                    ViewBag.Title = "Parametros Avisos";
+                    vista = "EditAvisos";
+                    break;
+                case 2:
+                    allObj = await _unitWork.Repository<PlantillaEmail>().GetByIdAsync(id);
+                    ViewBag.Title = "Parametros Facturación";
+                    vista = "EditFacturacion";
+                    break;
+                default:
+                    break;
+            }
 
+            return View(vista, avisos);
+         
+        }
 
-            return View(avisos);
+        [HttpPost]
+        public async Task<IActionResult> Edit(ClienteDto model)
+        {
+
+            if (ModelState.IsValid)
+            {
+                var cliente = _mapper.Map<Cliente>(model);
+
+                await _unitWork.Repository<Cliente>().UpdateAsync(cliente);
+
+                TempData["SuccessMessage"] = "Registro Actualizado Correctamente";
+                return RedirectToAction("Index", "Clientes");
+            }
+            else
+            {
+                ViewBag.Title = "Editar Cliente";
+                return View(model);
+            }
+
         }
 
 
@@ -165,10 +234,12 @@ namespace Caritas.Web.Controllers
 
             var aviso = await _unitWork.Repository<Aviso>().GetAsync(null, x => x.OrderBy(y => y.Cliente), "", true);
 
+
+
             //int cliente = 0;
             //foreach (var item in aviso)
             //{ 
-             
+
             //    while (item.Cliente != cliente)
             //    {
             //        cliente = item.Cliente;
@@ -230,12 +301,100 @@ namespace Caritas.Web.Controllers
             return Json(new { cantidad = avisos.Count - 1, resultado = "Ok" });
         }
 
+
+        [HttpPost]
+        [Authorize(Roles = "Administrador,Usuario")]
+        public async Task<JsonResult> EnviarFactura(int cliente)
+        {
+            var calendario = await _unitWork.Repository<Calendario>().GetAsync(x=>x.Id == 2);
+
+            var avisos = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == cliente, null, "", true);
+
+            var PathToFile = _hostEnvironment.WebRootPath + Path.DirectorySeparatorChar.ToString()
+                      + "templates" + Path.DirectorySeparatorChar.ToString() + "EmailTemplates"
+                      + Path.DirectorySeparatorChar.ToString() + "Factura.html";
+
+
+            var subject = $"Aviso Vencimiento - Panteon Ntra Sra de la Merced - {avisos[0].Cliente}";
+
+            string HtmlBody = "";
+            using (StreamReader streamReader = System.IO.File.OpenText(PathToFile))
+            {
+                HtmlBody = streamReader.ReadToEnd();
+            }
+
+            ////{0} : Subject  
+            ////{1} : DateTime  
+            ////{2} : Name  
+            ////{3} : Email  
+            ////{4} : Message  
+            ////{5} : callbackURL  
+
+            string nombre = avisos[0].Nombre + ' ' + avisos[0].Apellido;
+            string tipo = "";
+            string codigo = avisos[0].CPagoElectronico;
+            decimal importe = 0;
+
+            foreach (var item in avisos)
+            {
+                tipo = tipo + (item.Tipo == "N" ? "Nicho " : "Urna ") + item.Nicho + " / " + item.Piso + "° desde " + item.FecDesde.ToString("dd/MM/yyyy") + " hasta " + item.FecHasta.ToString("dd/MM/yyyy") + "<br>";
+                importe = importe + item.Importe;
+            }
+
+            string messageBody = string.Format(HtmlBody,
+                subject,
+                nombre,
+                tipo,
+                importe.ToString("N2"),
+                codigo,
+                calendario[0].Observacion,
+                avisos[0].Valor_Vencido,
+                avisos[0].Valor_a_Vencer,
+                calendario[0].FechaAPartir.ToString("dd/MM/yyyy"),
+                avisos[0].SiguienteValor_Vencido,
+                avisos[0].SiguienteValor_a_Vencer
+                );
+
+
+            var enviar = await _serviceManagement.PostMail("carlos@dagsistemas.com.ar", cliente, nombre, subject, messageBody);
+            return Json(new { cantidad = avisos.Count - 1, resultado = "Ok" });
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetFacturacion(CalendarioDto model)
+        {
+
+            var calendario = _mapper.Map<Calendario>(model);
+
+            await _unitWork.Repository<Calendario>().UpdateAsync(calendario);
+
+            List<Aviso> listaFiltrada = new List<Aviso>();
+
+            //    var aviso = await _unitWork.Repository<Aviso>().GetAsync(null, x => x.OrderBy(y => y.Cliente), "", true);
+
+            var aviso = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == 6725, x => x.OrderBy(y => y.Cliente), "", true);
+
+            int cliente = 0;
+            //foreach (var item in aviso)
+            //{
+
+            //    while (item.Cliente != cliente)
+            //    {
+            //        cliente = item.Cliente;
+            //        var avisos = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == item.Cliente, null, "", true);
+            //        var dataPdf = await DescargarPdf(avisos);
+            //    }
+
+            //}
+            return Json(aviso);
+        }
+
         //private async Task<IActionResult> DescargarPdf(IReadOnlyList<Aviso> model)
 
         [HttpPost]
         [Authorize(Roles = "Administrador,Usuario")]
         public async Task<IActionResult> DescargarPdf(IReadOnlyList<Aviso> model)
-        {      
+        {
             var cliente = await _unitWork.Repository<Cliente>().GetByIdAsync(model[0].Cliente);
             if (cliente != null)
             {
@@ -303,7 +462,7 @@ namespace Caritas.Web.Controllers
                                     {
                                         foster.Cell().Border(1).AlignCenter().Padding(2).Text("Fecha de vencimiento: 24 de Julio de 2023").SemiBold();
                                         foster.Cell().Border(1).AlignRight().PaddingTop(2).PaddingRight(5).Text(total.ToString("N2")).SemiBold();
-                                    });                                  
+                                    });
                                 });
 
                                 col.Item().Text("").FontSize(3);
@@ -416,7 +575,7 @@ namespace Caritas.Web.Controllers
 
                     memoryStream.Position = 0;
                     await memoryStream.CopyToAsync(streamToWriteTo);
-                }              
+                }
             }
 
             return Ok();

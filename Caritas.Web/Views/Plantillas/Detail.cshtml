@@ -1,15 +1,11 @@
-﻿@{
-    ViewData["Title"] = "Index";
-}
-
-
+﻿
 
 <div class="jumbotron">
-    <h1 id="h1" class="display-4">Hello, world!</h1>
-    <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
+    <h1 id="h1" class="display-4">@ViewBag.Title</h1>
+    <p class="lead">Envios de avisos de Deudas</p>
     <hr class="my-4">
-    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-    <button class="btn btn-primary btn-lg" id="btnOpen" role="button">Aplicar</button>
+@*    <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
+*@    <button class="btn btn-primary btn-lg" id="btnOpen" role="button">Aplicar</button>
 </div>
 
 <br />
@@ -34,7 +30,6 @@
                 type: "POST",
                 url: "/Aviso/GetText",
                 data: "{}",
-                contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: true,
                 success: function (result) {

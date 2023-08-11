@@ -189,9 +189,9 @@ namespace Caritas.Web.Controllers
             }
             else
             {
-                ViewBag.Title = "Nueva Aplicación";
+                ViewBag.Title = "Nuevo cliente";
 
-                return PartialView(model);
+                return View(model);
             }
         }
 
