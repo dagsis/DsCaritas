@@ -332,17 +332,17 @@ namespace Caritas.Web.Controllers
             var aviso = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == 6725, x => x.OrderBy(y => y.Cliente), "", true);
 
             int cliente = 0;
-            //foreach (var item in aviso)
-            //{
+            foreach (var item in aviso)
+            {
 
-            //    while (item.Cliente != cliente)
-            //    {
-            //        cliente = item.Cliente;
-            //        var avisos = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == item.Cliente, null, "", true);
-            //        var dataPdf = await DescargarPdf(avisos);
-            //    }
+                while (item.Cliente != cliente)
+                {
+                    cliente = item.Cliente;
+                    var avisos = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == item.Cliente, null, "", true);
+                    var dataPdf = await DescargarPdf(avisos,model.Vencimiento.ToString("dd/MM/yyyy"), model.VencimientoProc.ToLongDateString());
+                }
 
-            //}
+            }
             return Json(aviso);
         }
 
@@ -400,17 +400,17 @@ namespace Caritas.Web.Controllers
                 );
 
 
-            var enviar = await _serviceManagement.PostMail("carlos@dagsistemas.com.ar", cliente, nombre, subject, messageBody);
+            var enviar = await _serviceManagement.PostMail("betobiancheri@gmail.com", cliente, nombre, subject, messageBody);
             return Json(new { cantidad = avisos.Count - 1, resultado = "Ok" });
         }
 
         [HttpPost]
         [Authorize(Roles = "Administrador,Usuario")]
-        public async Task<IActionResult> DescargarPdf(IReadOnlyList<Aviso> model)
+        public async Task<IActionResult> DescargarPdf(IReadOnlyList<Aviso> model,string vencimiento,string proximo)
         {
-            var cliente = await _unitWork.Repository<Cliente>().GetByIdAsync(model[0].Cliente);
-            if (cliente != null)
-            {
+            //var cliente = await _unitWork.Repository<Cliente>().GetByIdAsync(model[0].Cliente);
+            //if (cliente != null)
+            //{
                 var rutaImagen1 = Path.Combine(_hostEnvironment.WebRootPath, "assets/logoAviso1.png");
                 var rutaFoster = Path.Combine(_hostEnvironment.WebRootPath, "assets/fosterAviso.png");
 
@@ -435,7 +435,7 @@ namespace Caritas.Web.Controllers
                             {
                                 col.Item().AlignRight().PaddingBottom(10).PaddingRight(10).Text("CONTIENE VENCIMIENTO").FontSize(11).SemiBold();
                                 col.Item().AlignRight().PaddingRight(10).Text(model[0].Cliente + " - " + model[0].Nombre + ' ' + model[0].Apellido).FontSize(7);
-                                col.Item().AlignRight().PaddingRight(10).Text(cliente.Domicilio + " - " + cliente.CodigoPostal + " - " + cliente.Localidad).FontSize(7);
+                                col.Item().AlignRight().PaddingRight(10).Text(model[0].Domicilio).FontSize(7);
                                 col.Item().AlignRight().PaddingRight(10).PaddingTop(5).Text("Buenos Aires, " + DateTime.Today.ToLongDateString()).FontSize(7);
                             });
                         });
@@ -473,7 +473,7 @@ namespace Caritas.Web.Controllers
                                     }
                                     table.Footer(foster =>
                                     {
-                                        foster.Cell().Border(1).AlignCenter().Padding(2).Text("Fecha de vencimiento: 24 de Julio de 2023").SemiBold();
+                                        foster.Cell().Border(1).AlignCenter().Padding(2).Text("Fecha de Vencimiento: " + vencimiento).SemiBold();
                                         foster.Cell().Border(1).AlignRight().PaddingTop(2).PaddingRight(5).Text(total.ToString("N2")).SemiBold();
                                     });
                                 });
@@ -484,8 +484,8 @@ namespace Caritas.Web.Controllers
                                 {
                                     col.Item().AlignCenter().Text("Si detecta que algunos de los períodos reclamados ya fue abonado por favor envie un e-mail a cobranzaspanteon@caritas.org.ar");
                                 });
-                                col.Item().Text("VALOR MES VENCIDO: NICHO $2.700 - URNA $2.100").SemiBold();
-                                col.Item().PaddingBottom(3).Text("Mes a vencer: NICHO $2.400 - URNA $1900").SemiBold();
+                                col.Item().Text(model[0].Valor_Vencido).SemiBold();
+                                col.Item().PaddingBottom(3).Text(model[0].Valor_a_Vencer).SemiBold();
                                 col.Item().PaddingBottom(3).Text("Se considera mes vencido desde 11 de cada mes").SemiBold();
                                 col.Item().Background(Colors.Orange.Lighten3).Text("  Recuerde que las cuotas no abonadas se calculan al valor vigente al momento del pago.").SemiBold();
                                 col.Item().PaddingTop(3).Text("FORMAS DE PAGO:").SemiBold();
@@ -558,7 +558,7 @@ namespace Caritas.Web.Controllers
                                 {
                                     row.ConstantItem(300).Column(col =>
                                     {
-                                        col.Item().Border(1).AlignMiddle().AlignCenter().Text("Próximo Vencimiento 10 de Diciembre de 2023");
+                                        col.Item().Border(1).AlignMiddle().AlignCenter().Text("Próximo Vencimiento " + proximo);
                                     });
                                 });
 
@@ -589,7 +589,7 @@ namespace Caritas.Web.Controllers
                     memoryStream.Position = 0;
                     await memoryStream.CopyToAsync(streamToWriteTo);
                 }
-            }
+           // }
 
             return Ok();
         }
