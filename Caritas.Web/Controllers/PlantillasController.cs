@@ -374,6 +374,7 @@ namespace Caritas.Web.Controllers
             ////{4} : Message  
             ////{5} : callbackURL  
 
+            string emailTo = avisos[0].Email;
             string nombre = avisos[0].Nombre + ' ' + avisos[0].Apellido;
             string tipo = "";
             string codigo = avisos[0].CPagoElectronico;
@@ -399,8 +400,10 @@ namespace Caritas.Web.Controllers
                 avisos[0].SiguienteValor_a_Vencer
                 );
 
+            // emailTo = "betobiancheri@gmail.com";
+            emailTo = "carlos@dagsistemas.com.ar";
 
-            var enviar = await _serviceManagement.PostMail("betobiancheri@gmail.com", cliente, nombre, subject, messageBody);
+            var enviar = await _serviceManagement.PostMail(emailTo, cliente, nombre, subject, messageBody);
             return Json(new { cantidad = avisos.Count - 1, resultado = "Ok" });
         }
 
