@@ -65,7 +65,7 @@ namespace Caritas.Web.Controllers
                 },
                 Methods = new MethodsUI[] {
                     new MethodsUI() {Icono="fa fa-eye",titulo="Procesar",Url="/Plantillas/Detail",Clase="btn btn-info btn-sm",IsOnModal=false },
-                    //new MethodsUI() {Icono="fa fa-pencil",titulo="Parametros",Url="/Plantillas/Edit",Clase="btn btn-primary btn-sm",IsOnModal=false,Permiso = bEdit },
+                    new MethodsUI() {Icono="fa fa-pencil",titulo="Parametros",Url="/Plantillas/Edit",Clase="btn btn-primary btn-sm",IsOnModal=false,Permiso = bEdit },
                     //new MethodsUI() {Icono="fa fa-trash",titulo="Borrar",Url="/Plantillas/Delete",Clase="btn btn-danger btn-sm",Permiso = bDelete },
                 }
             };
@@ -170,7 +170,7 @@ namespace Caritas.Web.Controllers
                     break;
             }
 
-            return View(vista,calendario);
+            return View(vista, calendario);
         }
 
 
@@ -182,45 +182,64 @@ namespace Caritas.Web.Controllers
         {
 
             var allObj = new object();
-            PlantillaEmailDto avisos = _mapper.Map<PlantillaEmailDto>(allObj);
+            var calendario = new CalendarioDto();
 
             string vista = "";
             switch (id)
             {
                 case 1:
-                    allObj = await _unitWork.Repository<PlantillaEmail>().GetByIdAsync(id);
+                    allObj = await _unitWork.Repository<Calendario>().GetByIdAsync(id);
                     ViewBag.Title = "Parametros Avisos";
                     vista = "EditAvisos";
                     break;
                 case 2:
-                    allObj = await _unitWork.Repository<PlantillaEmail>().GetByIdAsync(id);
-                    ViewBag.Title = "Parametros Facturación";
+                    allObj = await _unitWork.Repository<Calendario>().GetByIdAsync(id);
+                    calendario = _mapper.Map<CalendarioDto>(allObj);
+                    ViewBag.Title = "Parametros Facturación - Edición";
                     vista = "EditFacturacion";
                     break;
                 default:
                     break;
             }
 
-            return View(vista, avisos);
-         
+            return View(vista, calendario);
+
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(ClienteDto model)
+        public async Task<IActionResult> Edit(CalendarioDto model)
         {
 
             if (ModelState.IsValid)
             {
-                var cliente = _mapper.Map<Cliente>(model);
-
-                await _unitWork.Repository<Cliente>().UpdateAsync(cliente);
-
+                switch (model.Id)
+                {
+                    case 1:
+                        break;
+                    case 2:
+                        var calendario = _mapper.Map<Calendario>(model);
+                        await _unitWork.Repository<Calendario>().UpdateAsync(calendario);
+                        break;
+                    default:
+                        break;
+                }
+              
                 TempData["SuccessMessage"] = "Registro Actualizado Correctamente";
-                return RedirectToAction("Index", "Clientes");
+                return RedirectToAction("Index", "Plantillas");
             }
             else
             {
-                ViewBag.Title = "Editar Cliente";
+                switch (model.Id)
+                {
+                    case 1:
+                        break;
+                    case 2:
+                        ViewBag.Title = "Parametros Facturación - Edición";
+                        break;
+                    default:
+                        break;
+                }
+               
                 return View(model);
             }
 
@@ -303,10 +322,35 @@ namespace Caritas.Web.Controllers
 
 
         [HttpPost]
+        public async Task<JsonResult> GetFacturacion(CalendarioDto model)
+        {
+          
+            List<Aviso> listaFiltrada = new List<Aviso>();
+
+            //    var aviso = await _unitWork.Repository<Aviso>().GetAsync(null, x => x.OrderBy(y => y.Cliente), "", true);
+
+            var aviso = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == 6725, x => x.OrderBy(y => y.Cliente), "", true);
+
+            int cliente = 0;
+            //foreach (var item in aviso)
+            //{
+
+            //    while (item.Cliente != cliente)
+            //    {
+            //        cliente = item.Cliente;
+            //        var avisos = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == item.Cliente, null, "", true);
+            //        var dataPdf = await DescargarPdf(avisos);
+            //    }
+
+            //}
+            return Json(aviso);
+        }
+
+        [HttpPost]
         [Authorize(Roles = "Administrador,Usuario")]
         public async Task<JsonResult> EnviarFactura(int cliente)
         {
-            var calendario = await _unitWork.Repository<Calendario>().GetAsync(x=>x.Id == 2);
+            var calendario = await _unitWork.Repository<Calendario>().GetAsync(x => x.Id == 2);
 
             var avisos = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == cliente, null, "", true);
 
@@ -359,37 +403,6 @@ namespace Caritas.Web.Controllers
             var enviar = await _serviceManagement.PostMail("carlos@dagsistemas.com.ar", cliente, nombre, subject, messageBody);
             return Json(new { cantidad = avisos.Count - 1, resultado = "Ok" });
         }
-
-        [HttpPost]
-        public async Task<JsonResult> GetFacturacion(CalendarioDto model)
-        {
-
-            var calendario = _mapper.Map<Calendario>(model);
-
-            await _unitWork.Repository<Calendario>().UpdateAsync(calendario);
-
-            List<Aviso> listaFiltrada = new List<Aviso>();
-
-            //    var aviso = await _unitWork.Repository<Aviso>().GetAsync(null, x => x.OrderBy(y => y.Cliente), "", true);
-
-            var aviso = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == 6725, x => x.OrderBy(y => y.Cliente), "", true);
-
-            int cliente = 0;
-            //foreach (var item in aviso)
-            //{
-
-            //    while (item.Cliente != cliente)
-            //    {
-            //        cliente = item.Cliente;
-            //        var avisos = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == item.Cliente, null, "", true);
-            //        var dataPdf = await DescargarPdf(avisos);
-            //    }
-
-            //}
-            return Json(aviso);
-        }
-
-        //private async Task<IActionResult> DescargarPdf(IReadOnlyList<Aviso> model)
 
         [HttpPost]
         [Authorize(Roles = "Administrador,Usuario")]

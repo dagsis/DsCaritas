@@ -1,0 +1,38 @@
+﻿@model Caritas.Web.DTOs.CalendarioDto
+
+<div class="jumbotron">
+    <h1 id="h1" class="display-4">@ViewBag.Title</h1>
+    <p class="lead">Parametros Generales</p>
+    <hr class="my-4">
+
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Id">
+
+        <div class="row">
+            <div class="form-group col-md-2">
+                <label for="txtNombre">Vencimiento</label>
+                <input type="date" class="form-control valid validText" asp-for="Vencimiento">
+                <span asp-validation-for="Vencimiento" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtNombre">Próximo Vencimiento</label>
+                <input type="date" class="form-control valid validText" asp-for="VencimientoProc">
+                <span asp-validation-for="VencimientoProc" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-2">
+                <label for="txtNombre">A Partir de </label>
+                <input type="date" class="form-control valid validText" asp-for="FechaAPartir">
+                <span asp-validation-for="FechaAPartir" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group col-md-12">
+            <label for="txtEmail">Observación E-Mail</label>
+            <textarea class="form-control" id="content" asp-for="Observacion"></textarea>
+        </div>
+
+        <button id="btnActionForm" class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i><span id="btnText">Actualizar</span></button>&nbsp;&nbsp;&nbsp;
+        <a class="btn btn-danger" asp-action="Index" asp-controller="Plantillas"><i class="fa fa-fw fa-lg fa-times-circle"></i>Regresar a la lista</a>
+    </form>
+</div>
