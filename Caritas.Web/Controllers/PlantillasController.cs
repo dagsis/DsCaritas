@@ -12,6 +12,8 @@ using NuGet.Protocol.Plugins;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using System.Net;
+using System.Text;
 
 namespace Caritas.Web.Controllers
 {
@@ -65,7 +67,7 @@ namespace Caritas.Web.Controllers
                 },
                 Methods = new MethodsUI[] {
                     new MethodsUI() {Icono="fa fa-eye",titulo="Procesar",Url="/Plantillas/Detail",Clase="btn btn-info btn-sm",IsOnModal=false },
-                    new MethodsUI() {Icono="fa fa-pencil",titulo="Parametros",Url="/Plantillas/Edit",Clase="btn btn-primary btn-sm",IsOnModal=false,Permiso = bEdit },
+                 //   new MethodsUI() {Icono="fa fa-pencil",titulo="Parametros",Url="/Plantillas/Edit",Clase="btn btn-primary btn-sm",IsOnModal=false,Permiso = bEdit },
                     //new MethodsUI() {Icono="fa fa-trash",titulo="Borrar",Url="/Plantillas/Delete",Clase="btn btn-danger btn-sm",Permiso = bDelete },
                 }
             };
@@ -324,7 +326,14 @@ namespace Caritas.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> GetFacturacion(CalendarioDto model)
         {
-          
+
+            string decodificado = WebUtility.HtmlDecode(model.Observacion);
+
+            var calendario = _mapper.Map<Calendario>(model);
+            calendario.Observacion = decodificado;
+
+            await _unitWork.Repository<Calendario>().UpdateAsync(calendario);
+
             List<Aviso> listaFiltrada = new List<Aviso>();
 
             //    var aviso = await _unitWork.Repository<Aviso>().GetAsync(null, x => x.OrderBy(y => y.Cliente), "", true);
