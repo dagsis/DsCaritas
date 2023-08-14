@@ -336,9 +336,9 @@ namespace Caritas.Web.Controllers
 
             List<Aviso> listaFiltrada = new List<Aviso>();
 
-            //    var aviso = await _unitWork.Repository<Aviso>().GetAsync(null, x => x.OrderBy(y => y.Cliente), "", true);
+              var aviso = await _unitWork.Repository<Aviso>().GetAsync(null, x => x.OrderBy(y => y.Cliente), "", true);
 
-            var aviso = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == 6725, x => x.OrderBy(y => y.Cliente), "", true);
+          //  var aviso = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == 6725, x => x.OrderBy(y => y.Cliente), "", true);
 
             int cliente = 0;
             foreach (var item in aviso)
@@ -410,7 +410,7 @@ namespace Caritas.Web.Controllers
                 );
 
             // emailTo = "betobiancheri@gmail.com";
-            emailTo = "carlos@dagsistemas.com.ar";
+            //   emailTo = "carlos@dagsistemas.com.ar";
 
             var enviar = await _serviceManagement.PostMail(emailTo, cliente, nombre, subject, messageBody);
             return Json(new { cantidad = avisos.Count - 1, resultado = "Ok" });

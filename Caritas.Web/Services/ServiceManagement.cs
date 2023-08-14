@@ -74,8 +74,10 @@ namespace Caritas.Web.Services
                     //Add other fields
                     multipartFormContent.Add(new StringContent("Panteon Nuestra Señora de la  Merced "), name: "DisplayName");
                     multipartFormContent.Add(new StringContent(envia), name: "Envia");
-                    multipartFormContent.Add(new StringContent("no-responder@dagsis.com.ar"), name: "Usuario");
-                    multipartFormContent.Add(new StringContent("Perg0022."), name: "Password");
+                  //  multipartFormContent.Add(new StringContent("no-responder@dagsis.com.ar"), name: "Usuario");
+                  //  multipartFormContent.Add(new StringContent("Perg0022."), name: "Password");
+                    multipartFormContent.Add(new StringContent("sistemaspanteon@caritasbsas.org.ar"), name: "Usuario");
+                    multipartFormContent.Add(new StringContent("$ClavePanteon23"), name: "Password");
                     multipartFormContent.Add(new StringContent(asunto), name: "Asunto");
                     multipartFormContent.Add(new StringContent(body), name: "HtmlMessage");
 
