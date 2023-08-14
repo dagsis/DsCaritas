@@ -146,7 +146,7 @@ namespace Caritas.Web.Controllers
 
 
         [HttpGet]
-        [Authorize(Roles = "Administrador,Usuario")]
+        [Authorize(Roles = "Administrador,Usuario,Empleado")]
         public async Task<IActionResult> Detail(int id)
         {
             CalendarioDto calendario;
@@ -324,21 +324,24 @@ namespace Caritas.Web.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Administrador,Usuario,Empleado")]
         public async Task<JsonResult> GetFacturacion(CalendarioDto model)
         {
 
             string decodificado = WebUtility.HtmlDecode(model.Observacion);
 
-            var calendario = _mapper.Map<Calendario>(model);
-            calendario.Observacion = decodificado;
+            var calobj = await _unitWork.Repository<Calendario>().GetByIdAsync(model.Id);
 
-            await _unitWork.Repository<Calendario>().UpdateAsync(calendario);
+           
+            calobj.Observacion = decodificado;
+
+            await _unitWork.Repository<Calendario>().UpdateAsync(calobj);
 
             List<Aviso> listaFiltrada = new List<Aviso>();
 
               var aviso = await _unitWork.Repository<Aviso>().GetAsync(null, x => x.OrderBy(y => y.Cliente), "", true);
 
-          //  var aviso = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == 6725, x => x.OrderBy(y => y.Cliente), "", true);
+     //       var aviso = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == 6725, x => x.OrderBy(y => y.Cliente), "", true);
 
             int cliente = 0;
             foreach (var item in aviso)
@@ -348,7 +351,7 @@ namespace Caritas.Web.Controllers
                 {
                     cliente = item.Cliente;
                     var avisos = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == item.Cliente, null, "", true);
-                    var dataPdf = await DescargarPdf(avisos,model.Vencimiento.ToString("dd/MM/yyyy"), model.VencimientoProc.ToLongDateString());
+                    var dataPdf = await DescargarPdf(avisos, model.Vencimiento.ToString("dd/MM/yyyy"), model.VencimientoProc.ToLongDateString());
                 }
 
             }
@@ -356,7 +359,7 @@ namespace Caritas.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Administrador,Usuario")]
+        [Authorize(Roles = "Administrador,Usuario,Empleado")]
         public async Task<JsonResult> EnviarFactura(int cliente)
         {
             var calendario = await _unitWork.Repository<Calendario>().GetAsync(x => x.Id == 2);
@@ -391,7 +394,7 @@ namespace Caritas.Web.Controllers
 
             foreach (var item in avisos)
             {
-                tipo = tipo + (item.Tipo == "N" ? "Nicho " : "Urna ") + item.Nicho + " / " + item.Piso + "° desde " + item.FecDesde.ToString("dd/MM/yyyy") + " hasta " + item.FecHasta.ToString("dd/MM/yyyy") + "<br>";
+                tipo = tipo + (item.Tipo == "N" ? "Nicho " : "Urna ") + item.Nicho + " / " + item.Piso + "° desde " + item.FecDesde.ToString("dd/MM/yyyy") + " hasta " + item.FecHasta.ToString("dd/MM/yyyy")+ " importe a abonar:" + item.Importe.ToString("C2") + "<br>";
                 importe = importe + item.Importe;
             }
 
@@ -417,7 +420,7 @@ namespace Caritas.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Administrador,Usuario")]
+        [Authorize(Roles = "Administrador,Usuario,Empleado")]
         public async Task<IActionResult> DescargarPdf(IReadOnlyList<Aviso> model,string vencimiento,string proximo)
         {
             //var cliente = await _unitWork.Repository<Cliente>().GetByIdAsync(model[0].Cliente);
@@ -594,14 +597,14 @@ namespace Caritas.Web.Controllers
                       + Path.DirectorySeparatorChar.ToString() + model[0].Cliente + ".pdf";
 
 
-                using (MemoryStream memoryStream = new MemoryStream(data))
-                {
-                    using Stream streamToWriteTo = System.IO.File.Open(PathToFilePdf, FileMode.Create);
+            using (MemoryStream memoryStream = new MemoryStream(data))
+            {
+                using Stream streamToWriteTo = System.IO.File.Open(PathToFilePdf, FileMode.Create);
 
-                    memoryStream.Position = 0;
-                    await memoryStream.CopyToAsync(streamToWriteTo);
-                }
-           // }
+                memoryStream.Position = 0;
+                await memoryStream.CopyToAsync(streamToWriteTo);
+            }
+            // }
 
             return Ok();
         }
