@@ -351,7 +351,7 @@ namespace Caritas.Web.Controllers
                 {
                     cliente = item.Cliente;
                     var avisos = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == item.Cliente, null, "", true);
-                    var dataPdf = await DescargarPdf(avisos, model.Vencimiento.ToString("dd/MM/yyyy"), model.VencimientoProc.ToLongDateString());
+                    var dataPdf = await DescargarPdf(avisos, model.Vencimiento.ToString("dd/MM/yyyy"), model.VencimientoProc.ToLongDateString(),model.FechaAPartir.ToString("dd/MM/yyyy"));
                 }
 
             }
@@ -413,7 +413,7 @@ namespace Caritas.Web.Controllers
                 );
 
             // emailTo = "betobiancheri@gmail.com";
-            //   emailTo = "carlos@dagsistemas.com.ar";
+           // emailTo = "carlos@dagsistemas.com.ar";
 
             var enviar = await _serviceManagement.PostMail(emailTo, cliente, nombre, subject, messageBody);
             return Json(new { cantidad = avisos.Count - 1, resultado = "Ok" });
@@ -421,7 +421,7 @@ namespace Caritas.Web.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Administrador,Usuario,Empleado")]
-        public async Task<IActionResult> DescargarPdf(IReadOnlyList<Aviso> model,string vencimiento,string proximo)
+        public async Task<IActionResult> DescargarPdf(IReadOnlyList<Aviso> model,string vencimiento,string proximo,string FechaAPartir)
         {
             //var cliente = await _unitWork.Repository<Cliente>().GetByIdAsync(model[0].Cliente);
             //if (cliente != null)
@@ -451,7 +451,8 @@ namespace Caritas.Web.Controllers
                                 col.Item().AlignRight().PaddingBottom(10).PaddingRight(10).Text("CONTIENE VENCIMIENTO").FontSize(11).SemiBold();
                                 col.Item().AlignRight().PaddingRight(10).Text(model[0].Cliente + " - " + model[0].Nombre + ' ' + model[0].Apellido).FontSize(7);
                                 col.Item().AlignRight().PaddingRight(10).Text(model[0].Domicilio).FontSize(7);
-                                col.Item().AlignRight().PaddingRight(10).PaddingTop(5).Text("Buenos Aires, " + DateTime.Today.ToLongDateString()).FontSize(7);
+                                col.Item().AlignRight().PaddingRight(10).Text(" ").FontSize(7);
+                                col.Item().AlignRight().PaddingRight(10).PaddingTop(5).Text("Buenos Aires, " + DateTime.Today.ToShortDateString()).FontSize(10);
                             });
                         });
 
@@ -499,8 +500,15 @@ namespace Caritas.Web.Controllers
                                 {
                                     col.Item().AlignCenter().Text("Si detecta que algunos de los períodos reclamados ya fue abonado por favor envie un e-mail a cobranzaspanteon@caritas.org.ar");
                                 });
-                                col.Item().Text(model[0].Valor_Vencido).SemiBold();
+
                                 col.Item().PaddingBottom(3).Text(model[0].Valor_a_Vencer).SemiBold();
+                                col.Item().Text(model[0].SiguienteValor_Vencido).SemiBold();
+                                col.Item().Text("VALORES A PARTIR DEL " + FechaAPartir).SemiBold();
+                                col.Item().Text(model[0].SiguienteValor_Vencido).SemiBold();
+                                col.Item().PaddingBottom(3).Text(model[0].SiguienteValor_a_Vencer).SemiBold();
+
+               
+
                                 col.Item().PaddingBottom(3).Text("Se considera mes vencido desde 11 de cada mes").SemiBold();
                                 col.Item().Background(Colors.Orange.Lighten3).Text("  Recuerde que las cuotas no abonadas se calculan al valor vigente al momento del pago.").SemiBold();
                                 col.Item().PaddingTop(3).Text("FORMAS DE PAGO:").SemiBold();
