@@ -394,7 +394,7 @@ namespace Caritas.Web.Controllers
 
             foreach (var item in avisos)
             {
-                tipo = tipo + (item.Tipo == "N" ? "Nicho " : "Urna ") + item.Nicho + " / " + item.Piso + "° desde " + item.FecDesde.ToString("dd/MM/yyyy") + " hasta " + item.FecHasta.ToString("dd/MM/yyyy")+ " importe a abonar:" + item.Importe.ToString("C2") + "<br>";
+                tipo = tipo + (item.Tipo == "N" ? "Nicho " : "Urna ") + item.Nicho + " / " + item.PisoChar + " desde " + item.FecDesde.ToString("dd/MM/yyyy") + " hasta " + item.FecHasta.ToString("dd/MM/yyyy")+ " importe a abonar:" + item.Importe.ToString("C2") + "<br>";
                 importe = importe + item.Importe;
             }
 
@@ -412,7 +412,7 @@ namespace Caritas.Web.Controllers
                 avisos[0].SiguienteValor_a_Vencer
                 );
 
-            // emailTo = "betobiancheri@gmail.com";
+           // emailTo = "betobiancheri@gmail.com";
            // emailTo = "carlos@dagsistemas.com.ar";
 
             var enviar = await _serviceManagement.PostMail(emailTo, cliente, nombre, subject, messageBody);
@@ -481,7 +481,7 @@ namespace Caritas.Web.Controllers
                                         var precio = item.Importe;
                                         total += precio;
 
-                                        tipo = (item.Tipo == "N" ? "Nicho " : "Urna ") + item.Nicho + " / " + item.Piso + "° desde " + item.FecDesde.ToString("dd/MM/yyyy") + " hasta " + item.FecHasta.ToString("dd/MM/yyyy");
+                                        tipo = (item.Tipo == "N" ? "Nicho " : "Urna ") + item.Nicho + " / " + item.PisoChar + " desde " + item.FecDesde.ToString("dd/MM/yyyy") + " hasta " + item.FecHasta.ToString("dd/MM/yyyy");
 
                                         table.Cell().BorderLeft(1).BorderRight(1).PaddingLeft(5).Text(tipo).FontSize(10);
                                         table.Cell().BorderLeft(1).BorderRight(1).AlignRight().PaddingRight(5).Text(precio.ToString("N2")).FontSize(10);

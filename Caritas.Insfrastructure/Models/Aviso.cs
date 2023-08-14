@@ -29,5 +29,6 @@ namespace Caritas.Insfrastructure.Models
         public string Valor_a_Vencer { get; set; }
         public string SiguienteValor_Vencido { get; set; }
         public string SiguienteValor_a_Vencer { get; set; }
+        public string PisoChar { get; set; }
     }
 }
