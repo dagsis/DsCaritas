@@ -25,6 +25,7 @@ namespace Caritas.Insfrastructure.Data
         public DbSet<Calendario>  Calendario { get; set; }
         public DbSet<PlantillaEmail> PlantillasEmail { get; set; }
         public DbSet<Aviso> Avisos { get; set; }
+        public DbSet<Resultado> Resultados { get; set; }
 
     }
 }

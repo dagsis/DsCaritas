@@ -341,7 +341,7 @@ namespace Caritas.Web.Controllers
 
               var aviso = await _unitWork.Repository<Aviso>().GetAsync(null, x => x.OrderBy(y => y.Cliente), "", true);
 
-     //       var aviso = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == 6725, x => x.OrderBy(y => y.Cliente), "", true);
+            //    var aviso = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == 6188, x => x.OrderBy(y => y.Cliente), "", true);
 
             int cliente = 0;
             foreach (var item in aviso)
@@ -351,7 +351,7 @@ namespace Caritas.Web.Controllers
                 {
                     cliente = item.Cliente;
                     var avisos = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == item.Cliente, null, "", true);
-                    var dataPdf = await DescargarPdf(avisos, model.Vencimiento.ToString("dd/MM/yyyy"), model.VencimientoProc.ToLongDateString(),model.FechaAPartir.ToString("dd/MM/yyyy"));
+                    var dataPdf = await DescargarPdf(avisos, model.Vencimiento.ToString("dd/MM/yyyy"), model.VencimientoProc.ToLongDateString(), model.FechaAPartir.ToString("dd/MM/yyyy"));
                 }
 
             }
@@ -362,6 +362,8 @@ namespace Caritas.Web.Controllers
         [Authorize(Roles = "Administrador,Usuario,Empleado")]
         public async Task<JsonResult> EnviarFactura(int cliente)
         {
+            // Poner aca el control de envio
+
             var calendario = await _unitWork.Repository<Calendario>().GetAsync(x => x.Id == 2);
 
             var avisos = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == cliente, null, "", true);
@@ -413,7 +415,7 @@ namespace Caritas.Web.Controllers
                 );
 
            // emailTo = "betobiancheri@gmail.com";
-           // emailTo = "carlos@dagsistemas.com.ar";
+         //  emailTo = "carlos@dagsistemas.com.ar";
 
             var enviar = await _serviceManagement.PostMail(emailTo, cliente, nombre, subject, messageBody);
             return Json(new { cantidad = avisos.Count - 1, resultado = "Ok" });
