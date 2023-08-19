@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Caritas.Insfrastructure.Model;
 using Caritas.Insfrastructure.Models;
 using Caritas.Web.DTOs;
 using Caritas.Web.Extensions;
@@ -8,12 +7,9 @@ using DsCommon.IUnitOfWorkPatern;
 using DsCommon.ModelsTable;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Protocol.Plugins;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
 using System.Net;
-using System.Text;
 
 namespace Caritas.Web.Controllers
 {
@@ -225,7 +221,7 @@ namespace Caritas.Web.Controllers
                     default:
                         break;
                 }
-              
+
                 TempData["SuccessMessage"] = "Registro Actualizado Correctamente";
                 return RedirectToAction("Index", "Plantillas");
             }
@@ -241,7 +237,7 @@ namespace Caritas.Web.Controllers
                     default:
                         break;
                 }
-               
+
                 return View(model);
             }
 
@@ -327,31 +323,37 @@ namespace Caritas.Web.Controllers
         [Authorize(Roles = "Administrador,Usuario,Empleado")]
         public async Task<JsonResult> GetFacturacion(CalendarioDto model)
         {
-
             string decodificado = WebUtility.HtmlDecode(model.Observacion);
 
             var calobj = await _unitWork.Repository<Calendario>().GetByIdAsync(model.Id);
 
-           
+
             calobj.Observacion = decodificado;
 
             await _unitWork.Repository<Calendario>().UpdateAsync(calobj);
 
             List<Aviso> listaFiltrada = new List<Aviso>();
 
-              var aviso = await _unitWork.Repository<Aviso>().GetAsync(null, x => x.OrderBy(y => y.Cliente), "", true);
+            var aviso = await _unitWork.Repository<Aviso>().GetAsync(null, x => x.OrderBy(y => y.Cliente), "", true);
 
             //    var aviso = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == 6188, x => x.OrderBy(y => y.Cliente), "", true);
 
             int cliente = 0;
             foreach (var item in aviso)
             {
-
                 while (item.Cliente != cliente)
                 {
                     cliente = item.Cliente;
+
+                    var PathToFilePdf = _hostEnvironment.WebRootPath + Path.DirectorySeparatorChar.ToString()
+                    + "templates" + Path.DirectorySeparatorChar.ToString() + "PdfAvisos"
+                    + Path.DirectorySeparatorChar.ToString() + item.Cliente + ".pdf";
+
                     var avisos = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == item.Cliente, null, "", true);
-                    var dataPdf = await DescargarPdf(avisos, model.Vencimiento.ToString("dd/MM/yyyy"), model.VencimientoProc.ToLongDateString(), model.FechaAPartir.ToString("dd/MM/yyyy"));
+                    if (!System.IO.File.Exists(PathToFilePdf))
+                    {
+                        var dataPdf = await DescargarPdf(avisos, model.Vencimiento.ToString("dd/MM/yyyy"), model.VencimientoProc.ToLongDateString(), model.FechaAPartir.ToString("dd/MM/yyyy"));
+                    }
                 }
 
             }
@@ -362,11 +364,18 @@ namespace Caritas.Web.Controllers
         [Authorize(Roles = "Administrador,Usuario,Empleado")]
         public async Task<JsonResult> EnviarFactura(int cliente)
         {
-            // Poner aca el control de envio
-
             var calendario = await _unitWork.Repository<Calendario>().GetAsync(x => x.Id == 2);
-
             var avisos = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == cliente, null, "", true);
+
+           
+            // Poner aca el control de envio
+            var exitClient = await _unitWork.Repository<Resultado>().GetAsync(c=>c.Cliente == cliente);
+
+            if (exitClient.Count != 0)
+            {
+                return Json(new { cantidad = avisos.Count - 1, resultado = "Ok" });
+            }
+                
 
             var PathToFile = _hostEnvironment.WebRootPath + Path.DirectorySeparatorChar.ToString()
                       + "templates" + Path.DirectorySeparatorChar.ToString() + "EmailTemplates"
@@ -396,7 +405,7 @@ namespace Caritas.Web.Controllers
 
             foreach (var item in avisos)
             {
-                tipo = tipo + (item.Tipo == "N" ? "Nicho " : "Urna ") + item.Nicho + " / " + item.PisoChar + " desde " + item.FecDesde.ToString("dd/MM/yyyy") + " hasta " + item.FecHasta.ToString("dd/MM/yyyy")+ " importe a abonar:" + item.Importe.ToString("C2") + "<br>";
+                tipo = tipo + (item.Tipo == "N" ? "Nicho " : "Urna ") + item.Nicho + " / " + item.PisoChar + " desde " + item.FecDesde.ToString("dd/MM/yyyy") + " hasta " + item.FecHasta.ToString("dd/MM/yyyy") + " importe a abonar:" + item.Importe.ToString("C2") + "<br>";
                 importe = importe + item.Importe;
             }
 
@@ -414,8 +423,8 @@ namespace Caritas.Web.Controllers
                 avisos[0].SiguienteValor_a_Vencer
                 );
 
-           // emailTo = "betobiancheri@gmail.com";
-         //  emailTo = "carlos@dagsistemas.com.ar";
+            // emailTo = "betobiancheri@gmail.com";
+            //  emailTo = "carlos@dagsistemas.com.ar";
 
             var enviar = await _serviceManagement.PostMail(emailTo, cliente, nombre, subject, messageBody);
             return Json(new { cantidad = avisos.Count - 1, resultado = "Ok" });
@@ -423,188 +432,188 @@ namespace Caritas.Web.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Administrador,Usuario,Empleado")]
-        public async Task<IActionResult> DescargarPdf(IReadOnlyList<Aviso> model,string vencimiento,string proximo,string FechaAPartir)
+        public async Task<IActionResult> DescargarPdf(IReadOnlyList<Aviso> model, string vencimiento, string proximo, string FechaAPartir)
         {
             //var cliente = await _unitWork.Repository<Cliente>().GetByIdAsync(model[0].Cliente);
             //if (cliente != null)
             //{
-                var rutaImagen1 = Path.Combine(_hostEnvironment.WebRootPath, "assets/logoAviso1.png");
-                var rutaFoster = Path.Combine(_hostEnvironment.WebRootPath, "assets/fosterAviso.png");
+            var rutaImagen1 = Path.Combine(_hostEnvironment.WebRootPath, "assets/logoAviso1.png");
+            var rutaFoster = Path.Combine(_hostEnvironment.WebRootPath, "assets/fosterAviso.png");
 
-                byte[] imageData1 = System.IO.File.ReadAllBytes(rutaImagen1);
-                byte[] imageData3 = System.IO.File.ReadAllBytes(rutaFoster);
+            byte[] imageData1 = System.IO.File.ReadAllBytes(rutaImagen1);
+            byte[] imageData3 = System.IO.File.ReadAllBytes(rutaFoster);
 
-                //  QuestPDF.Settings.License = LicenseType.Community;
+            //  QuestPDF.Settings.License = LicenseType.Community;
 
-                var data = Document.Create(document =>
+            var data = Document.Create(document =>
+            {
+                document.Page(page =>
                 {
-                    document.Page(page =>
+                    page.Margin(10);
+                    // page content
+                    page.Header().Row(row =>
                     {
-                        page.Margin(10);
-                        // page content
-                        page.Header().Row(row =>
+
+
+                        //  row.ConstantItem(380).Height(100).Placeholder();
+                        row.ConstantItem(380).Image(imageData1);
+                        row.RelativeItem().Height(100).Column(col =>
                         {
-
-
-                            //  row.ConstantItem(380).Height(100).Placeholder();
-                            row.ConstantItem(380).Image(imageData1);
-                            row.RelativeItem().Height(100).Column(col =>
-                            {
-                                col.Item().AlignRight().PaddingBottom(10).PaddingRight(10).Text("CONTIENE VENCIMIENTO").FontSize(11).SemiBold();
-                                col.Item().AlignRight().PaddingRight(10).Text(model[0].Cliente + " - " + model[0].Nombre + ' ' + model[0].Apellido).FontSize(7);
-                                col.Item().AlignRight().PaddingRight(10).Text(model[0].Domicilio).FontSize(7);
-                                col.Item().AlignRight().PaddingRight(10).Text(" ").FontSize(7);
-                                col.Item().AlignRight().PaddingRight(10).PaddingTop(5).Text("Buenos Aires, " + DateTime.Today.ToShortDateString()).FontSize(10);
-                            });
-                        });
-
-                        page.Content().Row(row =>
-                        {
-                            row.RelativeItem().PaddingTop(20).PaddingLeft(40).PaddingRight(40).Column(col =>
-                            {
-                                col.Item().AlignCenter().PaddingBottom(3).Text("INFORME DE VENCIMIENTOS").SemiBold();
-                                col.Item().Table(table =>
-                                {
-                                    table.ColumnsDefinition(col =>
-                                    {
-                                        col.RelativeColumn(5);
-                                        col.RelativeColumn();
-                                    });
-                                    table.Header(header =>
-                                    {
-                                        header.Cell().Border(1).AlignCenter().Padding(2).Text("C o n c e p t o").SemiBold();
-                                        header.Cell().Border(1).AlignCenter().Padding(2).Text("Importe").SemiBold();
-                                    });
-
-                                    decimal total = 0;
-                                    string tipo = "";
-                                    foreach (var item in model)
-                                    {
-                                        var precio = item.Importe;
-                                        total += precio;
-
-                                        tipo = (item.Tipo == "N" ? "Nicho " : "Urna ") + item.Nicho + " / " + item.PisoChar + " desde " + item.FecDesde.ToString("dd/MM/yyyy") + " hasta " + item.FecHasta.ToString("dd/MM/yyyy");
-
-                                        table.Cell().BorderLeft(1).BorderRight(1).PaddingLeft(5).Text(tipo).FontSize(10);
-                                        table.Cell().BorderLeft(1).BorderRight(1).AlignRight().PaddingRight(5).Text(precio.ToString("N2")).FontSize(10);
-
-                                    }
-                                    table.Footer(foster =>
-                                    {
-                                        foster.Cell().Border(1).AlignCenter().Padding(2).Text("Fecha de Vencimiento: " + vencimiento).SemiBold();
-                                        foster.Cell().Border(1).AlignRight().PaddingTop(2).PaddingRight(5).Text(total.ToString("N2")).SemiBold();
-                                    });
-                                });
-
-                                col.Item().Text("").FontSize(3);
-                                col.Item().Background(Colors.Grey.Lighten3).Padding(5)
-                                .Column(col =>
-                                {
-                                    col.Item().AlignCenter().Text("Si detecta que algunos de los períodos reclamados ya fue abonado por favor envie un e-mail a cobranzaspanteon@caritas.org.ar");
-                                });
-
-                                col.Item().PaddingBottom(3).Text(model[0].Valor_a_Vencer).SemiBold();
-                                col.Item().Text(model[0].SiguienteValor_Vencido).SemiBold();
-                                col.Item().Text("VALORES A PARTIR DEL " + FechaAPartir).SemiBold();
-                                col.Item().Text(model[0].SiguienteValor_Vencido).SemiBold();
-                                col.Item().PaddingBottom(3).Text(model[0].SiguienteValor_a_Vencer).SemiBold();
-
-               
-
-                                col.Item().PaddingBottom(3).Text("Se considera mes vencido desde 11 de cada mes").SemiBold();
-                                col.Item().Background(Colors.Orange.Lighten3).Text("  Recuerde que las cuotas no abonadas se calculan al valor vigente al momento del pago.").SemiBold();
-                                col.Item().PaddingTop(3).Text("FORMAS DE PAGO:").SemiBold();
-
-                                col.Item().Row(row =>
-                                {
-                                    row.ConstantItem(94).Column(col =>
-                                    {
-                                        col.Item().PaddingTop(3).Text("1-Débito Automatico:").FontSize(9).SemiBold();
-
-                                    });
-                                    row.RelativeItem().Column(col =>
-                                    {
-                                        col.Item().PaddingTop(3).Text("Tarjetas de débito VISA: 5% de descuento sobre el valor de la cuota por un año.").FontSize(9);
-                                        col.Item().PaddingTop(3).Text("Tarjetas de crédito MASTERCARD O VISA: 10% de descuento sobre el valor de la cuota por un año.").FontSize(9);
-                                        col.Item().PaddingTop(3).Text("Para solicitar la adhesión debe escribir a: debitospanteon@caritasbsas.org.ar").SemiBold().FontSize(9);
-                                    });
-                                });
-                                col.Item().Row(row =>
-                                {
-                                    row.ConstantItem(94).Column(col =>
-                                    {
-                                        col.Item().PaddingTop(3).Text("2-RAPIPAGO:").FontSize(9).SemiBold();
-
-                                    });
-                                    row.RelativeItem().Column(col =>
-                                    {
-                                        col.Item().PaddingTop(3).Text("Pagos sin facturas para Panteón Nuestra Señora de la Merced Código de Pago " + model[0].CPagoElectronico).FontSize(9);
-                                    });
-                                });
-                                col.Item().Row(row =>
-                                {
-                                    row.ConstantItem(94).Column(col =>
-                                    {
-                                        col.Item().PaddingTop(3).Text("3-PAGO FACIL:").FontSize(9).SemiBold();
-
-                                    });
-                                    row.RelativeItem().Column(col =>
-                                    {
-                                        col.Item().PaddingTop(3).Text("Pagos sin facturas para PAGOSPYME EXPRESS Código CYD" + model[0].CPagoElectronico).FontSize(9);
-                                    });
-                                });
-                                col.Item().Row(row =>
-                                {
-                                    row.ConstantItem(100).Column(col =>
-                                    {
-                                        col.Item().PaddingTop(3).Text("4-PAGO MIS CUENTAS:").FontSize(9).SemiBold();
-
-                                    });
-                                    row.RelativeItem().Column(col =>
-                                    {
-                                        col.Item().PaddingTop(3).Text("(Otros servicios) Panteón Nuestra Señora de la Merced Código de Pago " + model[0].CPagoElectronico).FontSize(9);
-                                    });
-                                });
-                                col.Item().Row(row =>
-                                {
-                                    row.ConstantItem(100).Column(col =>
-                                    {
-                                        col.Item().PaddingTop(3).Text("5-PAGAR (RED LINK):").FontSize(9).SemiBold();
-
-                                    });
-                                    row.RelativeItem().Column(col =>
-                                    {
-                                        col.Item().PaddingTop(3).Text("(Asociaciones y clubes) Panteón Nuestra Señora de la Merced Código de Pago " + model[0].CPagoElectronico).FontSize(9);
-                                    });
-                                });
-                                col.Item().PaddingTop(4).PaddingBottom(5).Text("No debe informar su pago, el mismo es identificado e informado por la compañía recaudadora.");
-
-                                col.Item().Row(row =>
-                                {
-                                    row.ConstantItem(300).Column(col =>
-                                    {
-                                        col.Item().Border(1).AlignMiddle().AlignCenter().Text("Próximo Vencimiento " + proximo);
-                                    });
-                                });
-
-                                col.Item().AlignRight().PaddingTop(3).PaddingRight(30).Text("La Administración").Underline().SemiBold();
-
-                            });
-                        });
-
-                        page.Footer().Row(row =>
-                        {
-                            row.RelativeItem().Height(100).Image(imageData3);
+                            col.Item().AlignRight().PaddingBottom(10).PaddingRight(10).Text("CONTIENE VENCIMIENTO").FontSize(11).SemiBold();
+                            col.Item().AlignRight().PaddingRight(10).Text(model[0].Cliente + " - " + model[0].Nombre + ' ' + model[0].Apellido).FontSize(7);
+                            col.Item().AlignRight().PaddingRight(10).Text(model[0].Domicilio).FontSize(7);
+                            col.Item().AlignRight().PaddingRight(10).Text(" ").FontSize(7);
+                            col.Item().AlignRight().PaddingRight(10).PaddingTop(5).Text("Buenos Aires, " + DateTime.Today.ToShortDateString()).FontSize(10);
                         });
                     });
-                }).GeneratePdf();
 
-                //Stream stream = new MemoryStream(data);
-                //return File(stream, "application/pdf", "Aviso.pdf");
+                    page.Content().Row(row =>
+                    {
+                        row.RelativeItem().PaddingTop(20).PaddingLeft(40).PaddingRight(40).Column(col =>
+                        {
+                            col.Item().AlignCenter().PaddingBottom(3).Text("INFORME DE VENCIMIENTOS").SemiBold();
+                            col.Item().Table(table =>
+                            {
+                                table.ColumnsDefinition(col =>
+                                {
+                                    col.RelativeColumn(5);
+                                    col.RelativeColumn();
+                                });
+                                table.Header(header =>
+                                {
+                                    header.Cell().Border(1).AlignCenter().Padding(2).Text("C o n c e p t o").SemiBold();
+                                    header.Cell().Border(1).AlignCenter().Padding(2).Text("Importe").SemiBold();
+                                });
 
-                var PathToFilePdf = _hostEnvironment.WebRootPath + Path.DirectorySeparatorChar.ToString()
-                      + "templates" + Path.DirectorySeparatorChar.ToString() + "PdfAvisos"
-                      + Path.DirectorySeparatorChar.ToString() + model[0].Cliente + ".pdf";
+                                decimal total = 0;
+                                string tipo = "";
+                                foreach (var item in model)
+                                {
+                                    var precio = item.Importe;
+                                    total += precio;
+
+                                    tipo = (item.Tipo == "N" ? "Nicho " : "Urna ") + item.Nicho + " / " + item.PisoChar + " desde " + item.FecDesde.ToString("dd/MM/yyyy") + " hasta " + item.FecHasta.ToString("dd/MM/yyyy");
+
+                                    table.Cell().BorderLeft(1).BorderRight(1).PaddingLeft(5).Text(tipo).FontSize(10);
+                                    table.Cell().BorderLeft(1).BorderRight(1).AlignRight().PaddingRight(5).Text(precio.ToString("N2")).FontSize(10);
+
+                                }
+                                table.Footer(foster =>
+                                {
+                                    foster.Cell().Border(1).AlignCenter().Padding(2).Text("Fecha de Vencimiento: " + vencimiento).SemiBold();
+                                    foster.Cell().Border(1).AlignRight().PaddingTop(2).PaddingRight(5).Text(total.ToString("N2")).SemiBold();
+                                });
+                            });
+
+                            col.Item().Text("").FontSize(3);
+                            col.Item().Background(Colors.Grey.Lighten3).Padding(5)
+                            .Column(col =>
+                            {
+                                col.Item().AlignCenter().Text("Si detecta que algunos de los períodos reclamados ya fue abonado por favor envie un e-mail a cobranzaspanteon@caritas.org.ar");
+                            });
+
+                            col.Item().PaddingBottom(3).Text(model[0].Valor_a_Vencer).SemiBold();
+                            col.Item().Text(model[0].SiguienteValor_Vencido).SemiBold();
+                            col.Item().Text("VALORES A PARTIR DEL " + FechaAPartir).SemiBold();
+                            col.Item().Text(model[0].SiguienteValor_Vencido).SemiBold();
+                            col.Item().PaddingBottom(3).Text(model[0].SiguienteValor_a_Vencer).SemiBold();
+
+
+
+                            col.Item().PaddingBottom(3).Text("Se considera mes vencido desde 11 de cada mes").SemiBold();
+                            col.Item().Background(Colors.Orange.Lighten3).Text("  Recuerde que las cuotas no abonadas se calculan al valor vigente al momento del pago.").SemiBold();
+                            col.Item().PaddingTop(3).Text("FORMAS DE PAGO:").SemiBold();
+
+                            col.Item().Row(row =>
+                            {
+                                row.ConstantItem(94).Column(col =>
+                                {
+                                    col.Item().PaddingTop(3).Text("1-Débito Automatico:").FontSize(9).SemiBold();
+
+                                });
+                                row.RelativeItem().Column(col =>
+                                {
+                                    col.Item().PaddingTop(3).Text("Tarjetas de débito VISA: 5% de descuento sobre el valor de la cuota por un año.").FontSize(9);
+                                    col.Item().PaddingTop(3).Text("Tarjetas de crédito MASTERCARD O VISA: 10% de descuento sobre el valor de la cuota por un año.").FontSize(9);
+                                    col.Item().PaddingTop(3).Text("Para solicitar la adhesión debe escribir a: debitospanteon@caritasbsas.org.ar").SemiBold().FontSize(9);
+                                });
+                            });
+                            col.Item().Row(row =>
+                            {
+                                row.ConstantItem(94).Column(col =>
+                                {
+                                    col.Item().PaddingTop(3).Text("2-RAPIPAGO:").FontSize(9).SemiBold();
+
+                                });
+                                row.RelativeItem().Column(col =>
+                                {
+                                    col.Item().PaddingTop(3).Text("Pagos sin facturas para Panteón Nuestra Señora de la Merced Código de Pago " + model[0].CPagoElectronico).FontSize(9);
+                                });
+                            });
+                            col.Item().Row(row =>
+                            {
+                                row.ConstantItem(94).Column(col =>
+                                {
+                                    col.Item().PaddingTop(3).Text("3-PAGO FACIL:").FontSize(9).SemiBold();
+
+                                });
+                                row.RelativeItem().Column(col =>
+                                {
+                                    col.Item().PaddingTop(3).Text("Pagos sin facturas para PAGOSPYME EXPRESS Código CYD" + model[0].CPagoElectronico).FontSize(9);
+                                });
+                            });
+                            col.Item().Row(row =>
+                            {
+                                row.ConstantItem(100).Column(col =>
+                                {
+                                    col.Item().PaddingTop(3).Text("4-PAGO MIS CUENTAS:").FontSize(9).SemiBold();
+
+                                });
+                                row.RelativeItem().Column(col =>
+                                {
+                                    col.Item().PaddingTop(3).Text("(Otros servicios) Panteón Nuestra Señora de la Merced Código de Pago " + model[0].CPagoElectronico).FontSize(9);
+                                });
+                            });
+                            col.Item().Row(row =>
+                            {
+                                row.ConstantItem(100).Column(col =>
+                                {
+                                    col.Item().PaddingTop(3).Text("5-PAGAR (RED LINK):").FontSize(9).SemiBold();
+
+                                });
+                                row.RelativeItem().Column(col =>
+                                {
+                                    col.Item().PaddingTop(3).Text("(Asociaciones y clubes) Panteón Nuestra Señora de la Merced Código de Pago " + model[0].CPagoElectronico).FontSize(9);
+                                });
+                            });
+                            col.Item().PaddingTop(4).PaddingBottom(5).Text("No debe informar su pago, el mismo es identificado e informado por la compañía recaudadora.");
+
+                            col.Item().Row(row =>
+                            {
+                                row.ConstantItem(300).Column(col =>
+                                {
+                                    col.Item().Border(1).AlignMiddle().AlignCenter().Text("Próximo Vencimiento " + proximo);
+                                });
+                            });
+
+                            col.Item().AlignRight().PaddingTop(3).PaddingRight(30).Text("La Administración").Underline().SemiBold();
+
+                        });
+                    });
+
+                    page.Footer().Row(row =>
+                    {
+                        row.RelativeItem().Height(100).Image(imageData3);
+                    });
+                });
+            }).GeneratePdf();
+
+            //Stream stream = new MemoryStream(data);
+            //return File(stream, "application/pdf", "Aviso.pdf");
+
+            var PathToFilePdf = _hostEnvironment.WebRootPath + Path.DirectorySeparatorChar.ToString()
+                  + "templates" + Path.DirectorySeparatorChar.ToString() + "PdfAvisos"
+                  + Path.DirectorySeparatorChar.ToString() + model[0].Cliente + ".pdf";
 
 
             using (MemoryStream memoryStream = new MemoryStream(data))
