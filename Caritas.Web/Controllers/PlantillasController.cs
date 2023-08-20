@@ -326,11 +326,32 @@ namespace Caritas.Web.Controllers
             string decodificado = WebUtility.HtmlDecode(model.Observacion);
 
             var calobj = await _unitWork.Repository<Calendario>().GetByIdAsync(model.Id);
-
-
             calobj.Observacion = decodificado;
 
             await _unitWork.Repository<Calendario>().UpdateAsync(calobj);
+
+            var PathToFilePdfDelete = _hostEnvironment.WebRootPath + Path.DirectorySeparatorChar.ToString()
+                   + "templates" + Path.DirectorySeparatorChar.ToString() + "PdfAvisos";
+
+            if (model.Registros)
+            {
+                var resEmail = await _unitWork.Repository<Resultado>().GetAllAsync();
+                _unitWork.Repository<Resultado>().DeleteRange(resEmail);
+
+                string path = PathToFilePdfDelete;
+
+                DirectoryInfo directory = new DirectoryInfo(path);
+
+                foreach (FileInfo file in directory.EnumerateFiles())
+                {
+                    file.Delete();
+                }
+
+                //foreach (DirectoryInfo dir in directory.EnumerateDirectories())
+                //{
+                //    dir.Delete(true);
+                //}
+            }
 
             List<Aviso> listaFiltrada = new List<Aviso>();
 

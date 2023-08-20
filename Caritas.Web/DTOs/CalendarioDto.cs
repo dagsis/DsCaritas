@@ -20,5 +20,6 @@ namespace Caritas.Web.DTOs
         [DataType(DataType.Date)]
         public DateTime FechaAPartir { get; set; }
         public string Observacion { get; set; }
+        public bool Registros { get; set; }
     }
 }

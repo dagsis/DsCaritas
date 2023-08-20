@@ -10,24 +10,31 @@
     <div class="row">
         <div class="form-group col-md-2">
             <label for="txtNombre">Vencimiento</label>
-            <input type="date" class="form-control valid validText" asp-for="Vencimiento">
+            <input type="date" class="form-control valid validText" id="vencimiento" asp-for="Vencimiento">
             <span asp-validation-for="Vencimiento" class="text-danger"></span>
         </div>
         <div class="form-group col-md-2">
             <label for="txtNombre">Próximo Vencimiento</label>
-            <input type="date" class="form-control valid validText" asp-for="VencimientoProc">
+            <input type="date" class="form-control valid validText" id="vencimientoProc" asp-for="VencimientoProc">
             <span asp-validation-for="VencimientoProc" class="text-danger"></span>
         </div>
         <div class="form-group col-md-2">
             <label for="txtNombre">A Partir de </label>
-            <input type="date" class="form-control valid validText" asp-for="FechaAPartir">
+            <input type="date" class="form-control valid validText" id="fechaAPartir" asp-for="FechaAPartir">
             <span asp-validation-for="FechaAPartir" class="text-danger"></span>
-        </div>
+        </div>      
     </div>
 
     <div class="form-group col-md-12">
         <label for="txtEmail">Observación E-Mail</label>
-        <textarea class="form-control" id="content" asp-for="Observacion"></textarea>
+        <textarea class="form-control" id="observacion" asp-for="Observacion"></textarea>
+    </div>
+
+    <div class="form-group col-md-12">
+        <input class="form-check-input" type="checkbox" value="" id="registros">
+        <label class="form-check-label" for="registros">
+            Eliminar Pdf y Reg
+        </label>
     </div>
 
     <button class="btn btn-primary btn-lg" id="btnOpen" role="button">Aplicar</button>
@@ -52,15 +59,19 @@
             $(".progress-bar").css('width', 0 + '%');
             $("#btnOpen").prop("disabled", true);
 
-           // var obse = document.getElementById("observacion")
-
+            var venc = document.getElementById("vencimiento").value;
+            var vencProc = document.getElementById("vencimientoProc").value;
+            var fechaAPar = document.getElementById("fechaAPartir").value;
+            var obse = document.getElementById("observacion").value;
+            var reg = document.getElementById("registros").checked;
             var model =
             {
                 id : "@Model.Id",
-                vencimiento : "@Model.Vencimiento",
-                VencimientoProc : "@Model.VencimientoProc",
-                FechaAPartir : "@Model.FechaAPartir",
-                Observacion: "@Model.Observacion"
+                vencimiento : venc,
+                VencimientoProc : vencProc,
+                FechaAPartir : fechaAPar,
+                Observacion: obse,
+                Registros: reg
             }
 
             $.ajax({
