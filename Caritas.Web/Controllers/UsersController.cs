@@ -25,7 +25,7 @@ namespace Caritas.Web.Controllers
         }
 
         [Breadcrumb("Usuarios")]
-        [Breadcrumb("Usuarios")]
+        [Breadcrumb("Listado de Usuarios")]
         [Authorize(Roles = "Administrador,Usuario")]
         public IActionResult Index()
         {

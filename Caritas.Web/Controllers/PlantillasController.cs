@@ -37,6 +37,8 @@ namespace Caritas.Web.Controllers
             _serviceManagement = serviceManagement;
         }
 
+        [Breadcrumb("Plantillas")]
+        [Breadcrumb("Plantilla De Facturación")]
         public IActionResult Index()
         {
             bool bCreate = true;

@@ -28,6 +28,9 @@ namespace Caritas.Web.Controllers
             _mapper = mapper;
             _authorizationService = authorizationService;
         }
+
+        [Breadcrumb("Clientes")]
+        [Breadcrumb("Listado de Clientes")]
         public async Task<IActionResult> Index()
         { 
             bool bCreate,bEdit,bDelete = false;

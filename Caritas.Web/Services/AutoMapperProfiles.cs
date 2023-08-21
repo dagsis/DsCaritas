@@ -17,6 +17,9 @@ namespace Caritas.Web.Services
 
             CreateMap<PlantillaEmail, PlantillaEmailDto>();
             CreateMap<PlantillaEmailDto, PlantillaEmail>();
+
+            CreateMap<ResultadoDto, Resultado>();
+            CreateMap<Resultado, ResultadoDto>();
         }
     }
 }
