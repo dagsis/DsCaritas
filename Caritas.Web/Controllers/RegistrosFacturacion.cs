@@ -66,7 +66,7 @@ namespace Caritas.Web.Controllers
 
             ViewBag.titulo = "Listado de Resultados";
             ViewData["Title"] = "Email Enviados";
-            ViewData["TableTitle"] = "Listado de Email";
+            ViewData["TableTitle"] = "Listado de Email Enviados";
 
             return View("~/Views/Shared/_TableViewExt.cshtml", model);
         }
