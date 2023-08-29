@@ -31,11 +31,11 @@ namespace Caritas.Web.Controllers
         {
             bool bCreate, bEdit, bDelete = false;
 
-            var claimsCreateMaestros = await _authorizationService.AuthorizeAsync(User, "CreateMaestros");
+            var claimsCreateMaestros = await _authorizationService.AuthorizeAsync(User, "CreateAdministracion");
             bCreate = claimsCreateMaestros.Succeeded ? true : false;
-            var claimsEditMaestros = await _authorizationService.AuthorizeAsync(User, "EditMaestros");
+            var claimsEditMaestros = await _authorizationService.AuthorizeAsync(User, "EditAdministracion");
             bEdit = claimsEditMaestros.Succeeded ? true : false;
-            var claimsDeleteMaestros = await _authorizationService.AuthorizeAsync(User, "DeleteMaestros");
+            var claimsDeleteMaestros = await _authorizationService.AuthorizeAsync(User, "DeleteAdministracion");
             bDelete = claimsDeleteMaestros.Succeeded ? true : false;
 
             var model = new TableUIExt()

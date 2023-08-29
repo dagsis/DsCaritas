@@ -42,8 +42,6 @@ namespace Caritas.Web.Controllers
         public IActionResult Index()
         {
             bool bCreate = true;
-            bool bEdit = true;
-            bool bDelete = true;
 
             var model = new TableUIExt()
             {
@@ -359,7 +357,7 @@ namespace Caritas.Web.Controllers
 
             var aviso = await _unitWork.Repository<Aviso>().GetAsync(null, x => x.OrderBy(y => y.Cliente), "", true);
 
-            //    var aviso = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == 6188, x => x.OrderBy(y => y.Cliente), "", true);
+       //       var aviso = await _unitWork.Repository<Aviso>().GetAsync(x => x.Cliente == 8242, x => x.OrderBy(y => y.Cliente), "", true);
 
             int cliente = 0;
             foreach (var item in aviso)
@@ -646,7 +644,7 @@ namespace Caritas.Web.Controllers
                 memoryStream.Position = 0;
                 await memoryStream.CopyToAsync(streamToWriteTo);
             }
-            // }
+       // }
 
             return Ok();
         }
