@@ -403,7 +403,7 @@ namespace Caritas.Web.Controllers
                       + Path.DirectorySeparatorChar.ToString() + "Factura.html";
 
 
-            var subject = $"Aviso Vencimiento - Panteon Ntra Sra de la Merced - {avisos[0].Cliente}";
+            var subject = $"Recordatorio de Vencimiento - Panteon Ntra Sra de la Merced - {avisos[0].Cliente}";
 
             string HtmlBody = "";
             using (StreamReader streamReader = System.IO.File.OpenText(PathToFile))
