@@ -37,7 +37,7 @@ namespace Caritas.Web.Controllers
                 Email = ((ClaimsIdentity)User.Identity!).Claims.Where(c => c.Type == ClaimTypes.Email).Select(c => c.Value).FirstOrDefault(),
                 Password = password,
                 Remenberme = false,
-                CompaniaId = Convert.ToInt32(SDRutas.CompaniaId)
+                AplicacionId = Convert.ToInt32(SDRutas.AplicacionId)
             };
 
             using (var client = new HttpClient())

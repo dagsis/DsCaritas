@@ -39,7 +39,7 @@ namespace Caritas.Web.Controllers
             {
                 Email = formdata["Email"],
                 Password = formdata["Password"],
-                CompaniaId = (int)SDRutas.CompaniaId
+                AplicacionId = (int)SDRutas.AplicacionId
             };
 
 

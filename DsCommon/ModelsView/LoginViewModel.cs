@@ -25,6 +25,6 @@ namespace DsCommon.ModelsView
         public string ReturnUrl { get; set; }
 
         public IList<AuthenticationScheme> ExternalLogins { get; set; }
-        public int CompaniaId { get; set; } = 0;
+        public int AplicacionId { get; set; } = 0;
     }
 }
