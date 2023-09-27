@@ -419,7 +419,8 @@ namespace Caritas.Web.Controllers
             ////{5} : callbackURL  
 
             string emailTo = avisos[0].Email;
-            string emailToCopia = "avisos1panteon@caritasbsas.org.ar";
+            //string emailToCopia = "avisos1panteon@caritasbsas.org.ar";
+            string emailToCopia = avisos[0].Email3;
             string nombre = avisos[0].Nombre + ' ' + avisos[0].Apellido;
             string tipo = "";
             string codigo = avisos[0].CPagoElectronico;
