@@ -400,10 +400,10 @@ namespace Caritas.Web.Controllers
 
             var PathToFile = _hostEnvironment.WebRootPath + Path.DirectorySeparatorChar.ToString()
                       + "templates" + Path.DirectorySeparatorChar.ToString() + "EmailTemplates"
-                      + Path.DirectorySeparatorChar.ToString() + "Factura.html";
+                      + Path.DirectorySeparatorChar.ToString() + "Aviso.html";
 
 
-            var subject = $"Recordatorio de Vencimiento - Panteon Ntra Sra de la Merced - {avisos[0].Cliente}";
+            var subject = $"Aviso de débito automático - Panteón Ntra. Sra. de la Merced - {avisos[0].Cliente}";
 
             string HtmlBody = "";
             using (StreamReader streamReader = System.IO.File.OpenText(PathToFile))
@@ -483,7 +483,7 @@ namespace Caritas.Web.Controllers
                         row.ConstantItem(380).Image(imageData1);
                         row.RelativeItem().Height(100).Column(col =>
                         {
-                            col.Item().AlignRight().PaddingBottom(10).PaddingRight(10).Text("CONTIENE VENCIMIENTO").FontSize(11).SemiBold();
+                            col.Item().AlignRight().PaddingBottom(10).PaddingRight(10).Text("").FontSize(11).SemiBold();
                             col.Item().AlignRight().PaddingRight(10).Text(model[0].Cliente + " - " + model[0].Nombre + ' ' + model[0].Apellido).FontSize(7);
                             col.Item().AlignRight().PaddingRight(10).Text(model[0].Domicilio).FontSize(7);
                             col.Item().AlignRight().PaddingRight(10).Text(" ").FontSize(7);
@@ -495,7 +495,8 @@ namespace Caritas.Web.Controllers
                     {
                         row.RelativeItem().PaddingTop(20).PaddingLeft(40).PaddingRight(40).Column(col =>
                         {
-                            col.Item().AlignCenter().PaddingBottom(3).Text("INFORME DE VENCIMIENTOS").SemiBold();
+                            col.Item().AlignCenter().PaddingBottom(3).Text("INFORME DE DÉBITO AUTOMÁTICO").SemiBold();
+                            col.Item().Text("El " + vencimiento + " debitaremos de su tarjeta los siguientes conceptos:").SemiBold();
                             col.Item().Table(table =>
                             {
                                 table.ColumnsDefinition(col =>
@@ -524,93 +525,25 @@ namespace Caritas.Web.Controllers
                                 }
                                 table.Footer(foster =>
                                 {
-                                    foster.Cell().Border(1).AlignCenter().Padding(2).Text("Fecha de Vencimiento: " + vencimiento).SemiBold();
+                                    foster.Cell().Border(1).AlignCenter().Padding(2).Text("Total a debitar: ").SemiBold();
                                     foster.Cell().Border(1).AlignRight().PaddingTop(2).PaddingRight(5).Text(total.ToString("N2")).SemiBold();
                                 });
                             });
 
-                            col.Item().Text("").FontSize(3);
+                            col.Item().Text(" ").FontSize(7);
+                            col.Item().Text("Debitaremos el total de la tarjeta " + model[0].Valor_a_Vencer).SemiBold();
+                            col.Item().Text("").FontSize(7);
                             col.Item().Background(Colors.Grey.Lighten3).Padding(5)
                             .Column(col =>
                             {
                                 col.Item().AlignCenter().Text("Si detecta que algunos de los períodos reclamados ya fue abonado por favor envie un e-mail a cobranzaspanteon@caritas.org.ar");
                             });
 
-                            col.Item().PaddingBottom(3).Text(model[0].Valor_a_Vencer).SemiBold();
-                            col.Item().Text(model[0].SiguienteValor_Vencido).SemiBold();
-                            col.Item().Text("VALORES A PARTIR DEL " + FechaAPartir).SemiBold();
+                            col.Item().Text(" ").FontSize(7);
+                            col.Item().Text("Los valores de débito automático para el próximo vencimiento serán los siguientes:" ).SemiBold();
                             col.Item().Text(model[0].SiguienteValor_Vencido).SemiBold();
                             col.Item().PaddingBottom(3).Text(model[0].SiguienteValor_a_Vencer).SemiBold();
-
-
-
-                            col.Item().PaddingBottom(3).Text("Se considera mes vencido desde 11 de cada mes").SemiBold();
-                            col.Item().Background(Colors.Orange.Lighten3).Text("  Recuerde que las cuotas no abonadas se calculan al valor vigente al momento del pago.").SemiBold();
-                            col.Item().PaddingTop(3).Text("FORMAS DE PAGO:").SemiBold();
-
-                            col.Item().Row(row =>
-                            {
-                                row.ConstantItem(94).Column(col =>
-                                {
-                                    col.Item().PaddingTop(3).Text("1-Débito Automatico:").FontSize(9).SemiBold();
-
-                                });
-                                row.RelativeItem().Column(col =>
-                                {
-                                    col.Item().PaddingTop(3).Text("Tarjetas de débito VISA: 5% de descuento sobre el valor de la cuota por un año.").FontSize(9);
-                                    col.Item().PaddingTop(3).Text("Tarjetas de crédito MASTERCARD O VISA: 10% de descuento sobre el valor de la cuota por un año.").FontSize(9);
-                                    col.Item().PaddingTop(3).Text("Para solicitar la adhesión debe escribir a: debitospanteon@caritasbsas.org.ar").SemiBold().FontSize(9);
-                                });
-                            });
-                            col.Item().Row(row =>
-                            {
-                                row.ConstantItem(94).Column(col =>
-                                {
-                                    col.Item().PaddingTop(3).Text("2-RAPIPAGO:").FontSize(9).SemiBold();
-
-                                });
-                                row.RelativeItem().Column(col =>
-                                {
-                                    col.Item().PaddingTop(3).Text("Pagos sin facturas para Panteón Nuestra Señora de la Merced Código de Pago " + model[0].CPagoElectronico).FontSize(9);
-                                });
-                            });
-                            col.Item().Row(row =>
-                            {
-                                row.ConstantItem(94).Column(col =>
-                                {
-                                    col.Item().PaddingTop(3).Text("3-PAGO FACIL:").FontSize(9).SemiBold();
-
-                                });
-                                row.RelativeItem().Column(col =>
-                                {
-                                    col.Item().PaddingTop(3).Text("Pagos sin facturas para PAGOSPYME EXPRESS Código CYD" + model[0].CPagoElectronico).FontSize(9);
-                                });
-                            });
-                            col.Item().Row(row =>
-                            {
-                                row.ConstantItem(100).Column(col =>
-                                {
-                                    col.Item().PaddingTop(3).Text("4-PAGO MIS CUENTAS:").FontSize(9).SemiBold();
-
-                                });
-                                row.RelativeItem().Column(col =>
-                                {
-                                    col.Item().PaddingTop(3).Text("(Otros servicios) Panteón Nuestra Señora de la Merced Código de Pago " + model[0].CPagoElectronico).FontSize(9);
-                                });
-                            });
-                            col.Item().Row(row =>
-                            {
-                                row.ConstantItem(100).Column(col =>
-                                {
-                                    col.Item().PaddingTop(3).Text("5-PAGAR (RED LINK):").FontSize(9).SemiBold();
-
-                                });
-                                row.RelativeItem().Column(col =>
-                                {
-                                    col.Item().PaddingTop(3).Text("(Asociaciones y clubes) Panteón Nuestra Señora de la Merced Código de Pago " + model[0].CPagoElectronico).FontSize(9);
-                                });
-                            });
-                            col.Item().PaddingTop(4).PaddingBottom(5).Text("No debe informar su pago, el mismo es identificado e informado por la compañía recaudadora.");
+                            col.Item().Text(" ").FontSize(7);
 
                             col.Item().Row(row =>
                             {
